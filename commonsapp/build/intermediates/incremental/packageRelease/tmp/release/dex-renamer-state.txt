@@ -1,4 +1,0 @@
-#Wed Aug 28 20:52:50 EAT 2019
-base.0=/home/g33k/AndroidStudioProjects/PromiseCommons/commonsapp/build/intermediates/dex/release/mergeDexRelease/out/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
