@@ -5,14 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
-import promise.InstanceProvider
-import promise.SingletonInstanceProvider
-import promise.createInstance
-import promise.data.log.LogUtil
-import promise.pref.Preferences
-import promise.tx.Tx
-import promise.tx.Tx.CallBackExecutor
-import promise.tx.TxManager
+import promise.commons.InstanceProvider
+import promise.commons.SingletonInstanceProvider
+import promise.commons.createInstance
+import promise.commons.data.log.LogUtil
+import promise.commons.pref.Preferences
+import promise.commons.tx.Tx
+import promise.commons.tx.Tx.CallBackExecutor
+import promise.commons.tx.TxManager
 
 class MainActivity : AppCompatActivity() {
 

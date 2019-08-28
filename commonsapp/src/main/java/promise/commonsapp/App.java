@@ -2,7 +2,7 @@ package promise.commonsapp;
 
 import android.app.Application;
 
-import promise.Promise;
+import promise.commons.Promise;
 
 public class App extends Application {
   @Override
