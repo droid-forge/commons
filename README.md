@@ -1,6 +1,7 @@
 # Android Promise Commons
-- [![Release](https://jitpack.io/v/android-promise/commons.svg)]
-  (https://jitpack.io/#android-promise/commons)
+
+[![Release](https://jitpack.io/v/android-promise/commons.svg)](https://jitpack.io/#android-promise/commons)
+
 The base promise library
 
 # Setup
