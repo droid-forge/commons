@@ -21,6 +21,7 @@ import androidx.core.util.Pair;
 import java.util.LinkedList;
 
 import promise.commons.SingletonInstanceProvider;
+import promise.commons.model.List;
 
 /**
  * manages all execution of tx instances
@@ -58,11 +59,20 @@ public class TxManager {
 
   /**
    * schedules a {@link Tx instance} on the pool and executes it
-   *
-   * @param tx   instance to be executed
-   * @param pair params for executing the ts
+   * @param pairs pairs of transactions with their arguments
    */
-  public void execute(Tx tx, @Nullable Pair<Object[], Long> pair) {
+  @SafeVarargs
+  public final void executeTasks(Pair<Tx, Pair<Object[], Long>>... pairs) {
+    List<? extends Pair<Tx, Pair<Object[], Long>>> pairs1 = List.fromArray(pairs);
+    if (pairs1.anyMatch(pair -> pair.first instanceof TimedTx))
+      throw new RuntimeException("TxManager doesn't support execution of timed operations yet");
+    if (queue == null) return;
+    queue.addAll(pairs1);
+    if (running) return;
+    cycle();
+  }
+
+  public final void execute(Tx tx, Pair<Object[], Long> pair) {
     if (tx instanceof TimedTx) throw new RuntimeException("TxManager doesn't support execution of timed operations yet");
     if (queue == null) return;
     queue.add(new Pair<>(tx, pair));
