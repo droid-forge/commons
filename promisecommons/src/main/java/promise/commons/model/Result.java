@@ -40,7 +40,7 @@ public class Result<T, E extends Throwable> {
    * @param response callback for response
    * @return result with response callback
    */
-  public Result<T, E> responseCallBack(Response<? super T, ? extends E> response) {
+  public Result<T, E> withCallBack(Response<? super T, ? extends E> response) {
     this.response = response;
     return this;
   }
@@ -50,7 +50,7 @@ public class Result<T, E extends Throwable> {
    * @param error callback for error
    * @return result with error callback
    */
-  public Result<T, E> errorCallBack(Error<? super E> error) {
+  public Result<T, E> withErrorCallBack(Error<? super E> error) {
     this.error = error;
     return this;
   }
