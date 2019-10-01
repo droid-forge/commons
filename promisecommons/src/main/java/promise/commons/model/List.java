@@ -86,6 +86,14 @@ public class List<T> extends ArrayList<T> {
     return new List<>(Arrays.asList(t));
   }
 
+  public static <T> List<T> generate(int num, MapFunction<? extends T, ? super Integer> function) {
+    List<T> list = new List<>();
+    for (int i = 0; i < num; i++) {
+      list.add(function.from(i));
+    }
+    return list;
+  }
+
   /**
    * reverses this list
    *
