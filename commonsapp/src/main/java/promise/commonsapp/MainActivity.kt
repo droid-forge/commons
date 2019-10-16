@@ -5,10 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
-import promise.commons.InstanceProvider
-import promise.commons.SingletonInstanceProvider
-import promise.commons.createInstance
-import promise.commons.data.log.LogUtil
+import promise.commons.makeInstance
 import promise.commons.pref.Preferences
 import promise.commons.tx.Tx
 import promise.commons.tx.Tx.CallBackExecutor
@@ -16,12 +13,50 @@ import promise.commons.tx.TxManager
 
 class MainActivity : AppCompatActivity() {
 
-  private val preferences = SingletonInstanceProvider.provider(object : InstanceProvider<Preferences> {
+  private val preferences = makeInstance(Preferences::class, arrayOf(PREFERENCE_NAME)) as Preferences
+
+  private val tx = object : Tx<String, String, String>() {
     /**
-     * Provides a fully-constructed and injected instance of `T`.
+     * gets the callback methods used for executing the transaction
+     * @return a callbacks object
      */
-    override fun get(): Preferences = createInstance(arrayOf(PREFERENCE_NAME))
-  }).get()
+    override fun getCallBackExecutor(): CallBackExecutor<String, String> =
+        CallBackExecutor { args ->
+          /**
+           * @return the result of the task
+           */
+          // assuming this is some very heavy operation that is synchronous
+          Thread.sleep(1000)
+          when {
+            args != null -> preferences.getString(args)
+            else -> ""
+          }
+        }
+
+    /**
+     * if there's more than one params to execute on
+     * this provided a callback object to notify on progress of
+     * each consecutive result
+     * @return the progress callback
+     */
+    override fun getProgress(): Progress<String, String> = object : Progress<String, String> {
+      /**
+       * calculates the progress value for the current result
+       * @param t current result
+       * @return a progress of the result
+       */
+      override fun onCalculateProgress(t: String?): String = t!!
+
+      /**
+       * returns the progress of the current result
+       * @param x current executed progress [.onCalculateProgress]
+       */
+      override fun onProgress(x: String?) {
+        progress_textview.text = x
+      }
+    }
+  }
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -38,53 +73,11 @@ class MainActivity : AppCompatActivity() {
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-    val prefNames = arrayOf("somekey", "somekey1", "somekey2", "somekey3", "somekey4", "somekey5")
-    val tx = object : Tx<String, String, String>() {
-      /**
-       * gets the callback methods used for executing the transaction
-       * @return a callbacks object
-       */
-      override fun getCallBackExecutor(): CallBackExecutor<String, String> =
-          CallBackExecutor { args ->
-            /**
-             * @return the result of the task
-             */
-            // assuming this is some very heavy operation that is synchronous
-            Thread.sleep(1000)
-            when {
-              args != null -> preferences.getString(args)
-              else -> ""
-            }
-          }
-
-      /**
-       * if there's more than one params to execute on
-       * this provided a callback object to notify on progress of
-       * each consecutive result
-       * @return the progress callback
-       */
-      override fun getProgress(): Progress<String, String> = object : Progress<String, String> {
-        /**
-         * calculates the progress value for the current result
-         * @param t current result
-         * @return a progress of the result
-         */
-        override fun onCalculateProgress(t: String?): String = t!!
-
-        /**
-         * returns the progress of the current result
-         * @param x current executed progress [.onCalculateProgress]
-         */
-        override fun onProgress(x: String?) {
-          progress_textview.text = x
-        }
-      }
-    }
 
     title_textview.text = "Started reading"
     TxManager.instance().execute(tx.complete {
       preferences_textview.text = it.reverse().toString()
-    }, Pair(prefNames, 1000))
+    }, Pair(arrayOf("somekey", "somekey1", "somekey2", "somekey3", "somekey4", "somekey5"), 1000))
   }
 
   override fun finish() {
@@ -93,7 +86,6 @@ class MainActivity : AppCompatActivity() {
   }
 
   companion object {
-    val TAG = LogUtil.makeTag(MainActivity::class.java)
     const val PREFERENCE_NAME = "pref_name"
   }
 }
