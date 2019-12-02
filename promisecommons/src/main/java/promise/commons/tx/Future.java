@@ -25,13 +25,11 @@ interface Future {
     void cancel();
 
     /**
-     *
      * @return
      */
     boolean isCancelled();
 
     /**
-     *
      * @return
      */
     boolean isDone();

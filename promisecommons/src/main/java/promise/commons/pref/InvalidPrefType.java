@@ -19,19 +19,17 @@ package promise.commons.pref;
  *
  */
 public class InvalidPrefType extends Exception {
-  /**
-   *
-   * @param message
-   */
+    /**
+     * @param message
+     */
     InvalidPrefType(String message) {
         super(message);
     }
 
-  /**
-   *
-   * @param object
-   */
-  InvalidPrefType(Object object) {
+    /**
+     * @param object
+     */
+    InvalidPrefType(Object object) {
         super(object.getClass().getSimpleName() + "type is invalid in preferences");
     }
 }

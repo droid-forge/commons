@@ -8,7 +8,7 @@ public class App extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    Promise.init(this, 5);
+    Promise.init(this, 10);
   }
 
   @Override

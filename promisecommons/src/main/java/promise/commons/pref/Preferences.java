@@ -17,8 +17,9 @@ package promise.commons.pref;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ import promise.commons.data.log.LogUtil;
  *
  */
 public class Preferences {
+    private static final String TAG = LogUtil.makeTag(Preferences.class);
     /**
      *
      */
@@ -55,7 +57,6 @@ public class Preferences {
      *
      */
     private SharedPreferences preferences;
-    private static final String TAG = LogUtil.makeTag(Preferences.class);
 
     /**
      *
@@ -66,7 +67,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param name
      */
     public Preferences(String name) {
@@ -75,22 +75,20 @@ public class Preferences {
     }
 
     /**
-     *
      * @param preferenceChange
      * @return
      */
     public Preferences preferenceChange(final PreferenceChange preferenceChange) {
         preferences.registerOnSharedPreferenceChangeListener(
-            (sharedPreferences, key) -> {
-                if (preferenceChange != null) {
-                    preferenceChange.onChange(sharedPreferences, key);
-                }
-            });
+                (sharedPreferences, key) -> {
+                    if (preferenceChange != null) {
+                        preferenceChange.onChange(sharedPreferences, key);
+                    }
+                });
         return this;
     }
 
     /**
-     *
      * @return
      */
     public Map<String, ?> getAll() {
@@ -98,7 +96,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -114,7 +111,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -130,7 +126,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -146,7 +141,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -162,7 +156,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -178,7 +171,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @param param
      * @return
@@ -197,7 +189,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @param param
      * @return
@@ -215,7 +206,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @param param
      * @return
@@ -233,7 +223,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @param param
      * @return
@@ -251,7 +240,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      * @param param
      * @return
@@ -269,7 +257,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param params
      * @return
      */
@@ -287,7 +274,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param pref
      * @throws InvalidPref
      */
@@ -304,7 +290,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param prefs
      * @throws InvalidPref
      */
@@ -332,7 +317,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param key
      */
     public void clear(String key) {
@@ -340,7 +324,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param pref
      * @param <T>
      * @return
@@ -367,7 +350,6 @@ public class Preferences {
      */
     public interface PreferenceChange {
         /**
-         *
          * @param preferences
          * @param key
          */
@@ -375,7 +357,6 @@ public class Preferences {
     }
 
     /**
-     *
      * @param <T>
      */
     public static class Pref<T> {
@@ -389,7 +370,6 @@ public class Preferences {
         private T data;
 
         /**
-         *
          * @param key
          * @param data
          */
@@ -466,7 +446,6 @@ public class Preferences {
         }
 
         /**
-         *
          * @return
          */
         public Preferences build() {
@@ -480,7 +459,6 @@ public class Preferences {
         }
 
         /**
-         *
          * @param name
          * @return
          */

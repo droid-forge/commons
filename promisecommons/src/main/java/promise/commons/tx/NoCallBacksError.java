@@ -24,9 +24,11 @@ class NoCallBacksError extends Exception {
     NoCallBacksError(String message) {
         super(message);
     }
+
     NoCallBacksError() {
         this("No callbacks Defined, exiting task");
     }
+
     void show() {
         LogUtil.e("_NoCallBacksError", getMessage());
     }

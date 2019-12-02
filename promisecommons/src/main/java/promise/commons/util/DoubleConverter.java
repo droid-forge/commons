@@ -17,6 +17,7 @@ package promise.commons.util;
 
 /**
  * The double converter converts a class instance to and from another form
+ *
  * @param <T> the type instance to be converted
  * @param <E> type to get the instance from during de-serializing
  * @param <X> type returned after serializing the instance

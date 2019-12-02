@@ -34,12 +34,8 @@ public class Dir {
 
     private String name;
 
-    public String getName() {
-        return name;
-    }
-
-    private void setName(String name) {
-        this.name = name;
+    public Dir(String name) {
+        map(name);
     }
 
     public static String getState() {
@@ -50,33 +46,17 @@ public class Dir {
         return Environment.MEDIA_MOUNTED.equals(getState());
     }
 
-    public Dir(String name) {
-        map(name);
-    }
-
-    public void map(String... dirs) {
-        String path = Environment.getExternalStorageDirectory().toString();
-        for (String dir: dirs) {
-            setName(path + File.separator + dir);
-            if (make(getName())) setName(getName());
-        }
-    }
-
     public static boolean make(String path) {
         File file = new File(path);
         if (!file.exists()) return file.mkdirs();
         return true;
     }
 
-    public String path(String name) {
-        return getName() + File.separator + name;
-    }
-
     public static void clearAppData(Context context) {
         try {
             String packageName = context.getApplicationContext().getPackageName();
             Runtime runtime = Runtime.getRuntime();
-            runtime.exec("pm clear "+packageName);
+            runtime.exec("pm clear " + packageName);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,8 +75,7 @@ public class Dir {
     public static void delete(String inputPath, String inputFile) {
         try {
             new File(inputPath + File.separator + inputFile).delete();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LogUtil.e(TAG, e.getMessage());
         }
     }
@@ -116,9 +95,11 @@ public class Dir {
             out.flush();
             out.close();
             LogUtil.e(TAG, "destination", outputPath + File.separator + inputFile);
+        } catch (FileNotFoundException fnfe1) {
+            LogUtil.e(TAG, fnfe1.getMessage());
+        } catch (Exception e) {
+            LogUtil.e(TAG, e.getMessage());
         }
-        catch (FileNotFoundException fnfe1) { LogUtil.e(TAG, fnfe1.getMessage()); }
-        catch (Exception e) { LogUtil.e(TAG, e.getMessage()); }
     }
 
     public static File save(InputStream in, File file) {
@@ -139,8 +120,29 @@ public class Dir {
             output.flush();
             output.close();
             input.close();
+        } catch (Exception e) {
+            LogUtil.e(TAG, e.getMessage());
         }
-        catch (Exception e) { LogUtil.e(TAG, e.getMessage()); }
         return file;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private void setName(String name) {
+        this.name = name;
+    }
+
+    public void map(String... dirs) {
+        String path = Environment.getExternalStorageDirectory().toString();
+        for (String dir : dirs) {
+            setName(path + File.separator + dir);
+            if (make(getName())) setName(getName());
+        }
+    }
+
+    public String path(String name) {
+        return getName() + File.separator + name;
     }
 }

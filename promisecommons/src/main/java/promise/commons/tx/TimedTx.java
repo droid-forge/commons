@@ -24,30 +24,33 @@ import promise.commons.Promise;
  * {@link Tx}
  */
 public abstract class TimedTx<RETURN, PROGRESS, ARGUMENT> extends Tx<RETURN, PROGRESS, ARGUMENT> {
-  /**
-   * should not be called on this instance since the execution must be scheduled for the future
-   * @param params given arguments
-   */
-  @Override
-  public void execute(@Nullable ARGUMENT[] params) {
-    throw new RuntimeException("This method stub is not allowed on TimedTX");
-  }
+    /**
+     * should not be called on this instance since the execution must be scheduled for the future
+     *
+     * @param params given arguments
+     */
+    @Override
+    public void execute(@Nullable ARGUMENT[] params) {
+        throw new RuntimeException("This method stub is not allowed on TimedTX");
+    }
 
-  /**
-   * execution will always happen on a background thread no matter which thread invokes it
-   * @param params execution arguments
-   * @param millis wait time interval between each execution
-   */
-  @Override
-  public void execute(@Nullable ARGUMENT[] params, long millis) {
-    if (millis < 1) throw new IllegalArgumentException("wait millis time must be more than zero");
-    Promise.instance().execute(() -> {
-      try {
-        Thread.sleep(millis);
-        super.execute(params);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    });
-  }
+    /**
+     * execution will always happen on a background thread no matter which thread invokes it
+     *
+     * @param params execution arguments
+     * @param millis wait time interval between each execution
+     */
+    @Override
+    public void execute(@Nullable ARGUMENT[] params, long millis) {
+        if (millis < 1)
+            throw new IllegalArgumentException("wait millis time must be more than zero");
+        Promise.instance().execute(() -> {
+            try {
+                Thread.sleep(millis);
+                super.execute(params);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }

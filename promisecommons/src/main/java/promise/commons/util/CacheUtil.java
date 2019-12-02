@@ -31,70 +31,69 @@ import promise.commons.data.log.LogUtil;
 import promise.commons.file.Dir;
 
 public class CacheUtil {
-  private String TAG = LogUtil.makeTag(CacheUtil.class);
-  private Context context;
+    private String TAG = LogUtil.makeTag(CacheUtil.class);
+    private Context context;
+    // The cache directory should look something like this
+    private File cacheDirectory;
 
-  public static CacheUtil of(Context context) {
-    return new CacheUtil(context);
-  }
+    private CacheUtil(Context context) {
+        this.context = context;
 
-  private CacheUtil(Context context) {
-    this.context = context;
-
-    if (Dir.isWritable()) {
-      cacheDirectory = context.getCacheDir();
-      cacheDirectory.mkdirs();
+        if (Dir.isWritable()) {
+            cacheDirectory = context.getCacheDir();
+            cacheDirectory.mkdirs();
+        }
     }
-  }
 
-  // The cache directory should look something like this
-  private File cacheDirectory;
-
-  private String convertToCacheName(String url) {
-    try {
-      MessageDigest digest = MessageDigest.getInstance("MD5");
-      digest.update(url.getBytes());
-      byte[] b = digest.digest();
-      BigInteger bi = new BigInteger(b);
-      return "mycache_" + bi.toString(16) + ".cac";
-    } catch (Exception e) {
-      Log.d("ERROR", e.toString());
-      return null;
+    public static CacheUtil of(Context context) {
+        return new CacheUtil(context);
     }
-  }
 
-  private static boolean tooOld(long time) {
-    long now = new Date().getTime();
-    long diff = now - time;
-    return diff > 900000;
-  }
-
-  public byte[] read(String url) {
-    try {
-      String file = cacheDirectory + "/" + convertToCacheName(url);
-      File f = new File(file);
-      if (!f.exists() || f.length() < 1) return null;
-      // Delete the cached file if it is too old
-      if (f.exists() && tooOld(f.lastModified())) f.delete();
-      byte data[] = new byte[(int) f.length()];
-      DataInputStream fis = new DataInputStream(
-          new FileInputStream(f));
-      fis.readFully(data);
-      fis.close();
-      return data;
-    } catch (Exception e) {
-      return null;
+    private static boolean tooOld(long time) {
+        long now = new Date().getTime();
+        long diff = now - time;
+        return diff > 900000;
     }
-  }
 
-  public void write(String url, String data) {
-    try {
-      String file = cacheDirectory + "/" + convertToCacheName(url);
-      PrintWriter pw = new PrintWriter(new FileWriter(file));
-      pw.print(data);
-      pw.close();
-    } catch (Exception e) {
-      LogUtil.e(TAG, e);
+    private String convertToCacheName(String url) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(url.getBytes());
+            byte[] b = digest.digest();
+            BigInteger bi = new BigInteger(b);
+            return "mycache_" + bi.toString(16) + ".cac";
+        } catch (Exception e) {
+            Log.d("ERROR", e.toString());
+            return null;
+        }
     }
-  }
+
+    public byte[] read(String url) {
+        try {
+            String file = cacheDirectory + "/" + convertToCacheName(url);
+            File f = new File(file);
+            if (!f.exists() || f.length() < 1) return null;
+            // Delete the cached file if it is too old
+            if (f.exists() && tooOld(f.lastModified())) f.delete();
+            byte[] data = new byte[(int) f.length()];
+            DataInputStream fis = new DataInputStream(
+                    new FileInputStream(f));
+            fis.readFully(data);
+            fis.close();
+            return data;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void write(String url, String data) {
+        try {
+            String file = cacheDirectory + "/" + convertToCacheName(url);
+            PrintWriter pw = new PrintWriter(new FileWriter(file));
+            pw.print(data);
+            pw.close();
+        } catch (Exception e) {
+            LogUtil.e(TAG, e);
+        }
+    }
 }

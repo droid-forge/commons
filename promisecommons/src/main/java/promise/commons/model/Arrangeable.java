@@ -31,7 +31,7 @@ public class Arrangeable<Value, Key> {
         if (o == null || getClass() != o.getClass()) return false;
         Arrangeable<?, ?> that = (Arrangeable<?, ?>) o;
         return value.equals(that.value) &&
-            key.equals(that.key);
+                key.equals(that.key);
     }
 
     @Override

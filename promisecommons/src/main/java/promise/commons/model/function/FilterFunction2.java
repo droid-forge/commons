@@ -18,5 +18,6 @@ package promise.commons.model.function;
  */
 public interface FilterFunction2<K, T, U> {
     K filterBy(U u);
+
     K getKey(T t);
 }

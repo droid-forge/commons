@@ -13,30 +13,33 @@
 
 package promise.commons.model;
 
-/** Created on 6/8/18 by yoctopus. */
+/**
+ * Created on 6/8/18 by yoctopus.
+ */
+
 public class Category<K, T> {
-  private List<T> list;
-  private K name;
+    private List<? extends T> list;
+    private K name;
 
-  public Category(K name) {
-    this.name = name;
-  }
+    public Category(K name) {
+        this.name = name;
+    }
 
-  public List<T> list() {
-    return list;
-  }
+    public List<? extends T> list() {
+        return list;
+    }
 
-  public Category<K, T> list(List<T> list) {
-    this.list = list;
-    return this;
-  }
+    public Category<K, T> list(List<? extends T> list) {
+        this.list = list;
+        return this;
+    }
 
-  public K name() {
-    return name;
-  }
+    public K name() {
+        return name;
+    }
 
-  public Category<K, T> name(K name) {
-    this.name = name;
-    return this;
-  }
+    public Category<K, T> name(K name) {
+        this.name = name;
+        return this;
+    }
 }
