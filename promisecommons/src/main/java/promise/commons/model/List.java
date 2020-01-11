@@ -40,6 +40,7 @@ import promise.commons.model.function.GroupFunction2;
 import promise.commons.model.function.GroupFunction3;
 import promise.commons.model.function.JoinFunction;
 import promise.commons.model.function.MapFunction;
+import promise.commons.model.function.MapIndexFunction;
 import promise.commons.model.function.ReduceFunction;
 import promise.commons.util.Conditions;
 
@@ -165,6 +166,37 @@ public class List<T> extends ArrayList<T> {
         List<E> list = new List<>();
         for (T t : this) list.add(function.from(t));
         return list;
+    }
+
+    public <E> List<E> mapIndexed(MapIndexFunction<? extends E, ? super T> function) {
+        List<E> list = new List<>();
+        for (int i = 0; i < this.size(); i ++) {
+            T t = get(i);
+            list.add(function.from(i, t));
+        }
+        return list;
+    }
+/*
+    public <K, V> Map<K, V> associate(MapFunction<Pair<K, V>, ? super T> function) {
+
+    }
+
+    public List<List<T>> chucked(int chuckSize) {
+
+    }
+
+    public <R> List<R> chucked(int chuckSize, MapFunction<List<? extends T>, ? super R> function) {
+
+    }*/
+
+    public Pair<List<? extends T>, List<? extends T>> partition(FilterFunction<? super T> function) {
+        List<T> first = new List<>();
+        List<T> second = new List<>();
+        for (T t : this) {
+            if (function.select(t)) first.add(t);
+            else second.add(t);
+        }
+        return new Pair(first, second);
     }
 
     /**

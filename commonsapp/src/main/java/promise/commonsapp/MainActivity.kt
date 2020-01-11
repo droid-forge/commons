@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
                      */
                     // assuming this is some very heavy operation that is synchronous
                     Thread.sleep(1000)
-
                     when {
                         args != null -> preferences.getString(args)
                         else -> ""
@@ -59,7 +58,6 @@ class MainActivity : AppCompatActivity() {
              * @param x current executed progress [.onCalculateProgress]
              */
             override fun onProgress(x: String?) {
-
                 progress_textview.text = x
             }
         }
@@ -69,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Logger.addLogAdapter(AndroidLogAdapter())
+
         preferences.save(ArrayMap<String, Any>().apply {
             put("somekey", "key0")
             put("somekey1", "key1")
@@ -81,7 +80,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-
         PromiseCallback<Array<String>> { resolve, _ ->
             resolve(arrayOf("somekey", "somekey1",
                     "somekey2", "somekey3",
@@ -95,8 +93,6 @@ class MainActivity : AppCompatActivity() {
             null
         }
         .execute()
-
-
     }
 
     override fun finish() {

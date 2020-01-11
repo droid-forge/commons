@@ -49,6 +49,12 @@ public class Result<T, E extends Throwable> {
         return this;
     }
 
+    public Result<T, E> withUICallback(Response<? super T, ? extends E> response,
+                                       Error<? super E> error) {
+        this.response = new UIResponse<T, E>(response, error);
+        return this;
+    }
+
     /**
      * register error callback
      *
@@ -75,7 +81,8 @@ public class Result<T, E extends Throwable> {
                 error((E) e);
             }
         } else LogUtil.e(TAG,
-                new IllegalStateException("Could not pass data: " + t + " , response not provided"));
+                new IllegalStateException("Could not pass data: " + t +
+                    " , response not provided"));
     }
 
     /**
@@ -87,7 +94,8 @@ public class Result<T, E extends Throwable> {
     public <R extends E> void error(R e) {
         if (error != null) error.onError(e);
         else LogUtil.e(TAG,
-                new IllegalStateException("Could not process error: " + e + " , error not provided"));
+                new IllegalStateException("Could not process error: " + e +
+                    " , error not provided"));
     }
 
     /**

@@ -21,7 +21,7 @@ public class Category<K, T> {
     private List<? extends T> list;
     private K name;
 
-    public Category(K name) {
+    Category(K name) {
         this.name = name;
     }
 

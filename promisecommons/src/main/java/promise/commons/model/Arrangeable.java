@@ -7,20 +7,20 @@ public class Arrangeable<Value, Key> {
     private Value value;
     private Key key;
 
-    public Value value() {
+    Value value() {
         return value;
     }
 
-    public Arrangeable<Value, Key> value(Value value) {
+    Arrangeable<Value, Key> value(Value value) {
         this.value = value;
         return this;
     }
 
-    public Key key() {
+    Key key() {
         return key;
     }
 
-    public Arrangeable<Value, Key> key(Key key) {
+    Arrangeable<Value, Key> key(Key key) {
         this.key = key;
         return this;
     }
