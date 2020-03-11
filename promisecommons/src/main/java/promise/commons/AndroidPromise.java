@@ -1,16 +1,14 @@
 /*
- *
- *  * Copyright 2017, Peter Vincent
- *  * Licensed under the Apache License, Version 2.0, Promise.
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  * http://www.apache.org/licenses/LICENSE-2.0
- *  * Unless required by applicable law or agreed to in writing,
- *  * software distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *
+ * Copyright 2017, Peter Vincent
+ *  Licensed under the Apache License, Version 2.0, Android Promise.
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package promise.commons;
@@ -43,7 +41,7 @@ import promise.commons.util.Conditions;
 /**
  *
  */
-public class Promise {
+public class AndroidPromise {
     /**
      *
      */
@@ -51,7 +49,7 @@ public class Promise {
     /**
      *
      */
-    private static final String TAG = LogUtil.makeTag(Promise.class);
+    private static final String TAG = LogUtil.makeTag(AndroidPromise.class);
     /**
      *
      */
@@ -80,7 +78,7 @@ public class Promise {
     /**
      * @param context
      */
-    Promise(Application context) {
+    AndroidPromise(Application context) {
         this.context = context;
         disposable = new CompositeDisposable();
     }
@@ -91,13 +89,13 @@ public class Promise {
      * @param context application
      * @return promise or throws error if already created
      */
-    public static Promise init(Application context) {
+    public static AndroidPromise init(Application context) {
         try {
-            PromiseProvider.instance();
+            AndroidPromiseProvider.instance();
             throw new IllegalStateException("Promise can only be instantiated once");
         } catch (IllegalAccessException ignored) {
             initializeRxUndeliverableError();
-            return SingletonInstanceProvider.provider(PromiseProvider.create(ApplicationProvider.create(context))).get();
+            return SingletonInstanceProvider.provider(AndroidPromiseProvider.create(ApplicationProvider.create(context))).get();
         }
     }
 
@@ -108,13 +106,13 @@ public class Promise {
      * @param numOfThreads threads to use in background tasks
      * @return promise instance or throw an error if already created
      */
-    public static Promise init(Application context, int numOfThreads) {
+    public static AndroidPromise init(Application context, int numOfThreads) {
         try {
-            PromiseProvider.instance();
+            AndroidPromiseProvider.instance();
             throw new IllegalStateException("Promise can only be instantiated once");
         } catch (IllegalAccessException ignored) {
             initializeRxUndeliverableError();
-            return SingletonInstanceProvider.provider(PromiseProvider.create(ApplicationProvider.create(context), numOfThreads)).get();
+            return SingletonInstanceProvider.provider(AndroidPromiseProvider.create(ApplicationProvider.create(context), numOfThreads)).get();
         }
     }
 
@@ -130,9 +128,9 @@ public class Promise {
     /**
      * @return
      */
-    public static Promise instance() {
+    public static AndroidPromise instance() {
         try {
-            return SingletonInstanceProvider.provider(PromiseProvider.instance()).get();
+            return SingletonInstanceProvider.provider(AndroidPromiseProvider.instance()).get();
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -191,7 +189,7 @@ public class Promise {
      * @param threads
      * @return
      */
-    Promise threads(int threads) {
+    AndroidPromise threads(int threads) {
         if (executor == null) executor = Executors.newFixedThreadPool(threads);
         return this;
     }
@@ -199,7 +197,7 @@ public class Promise {
     /**
      * @return
      */
-    public Promise disableErrors() {
+    public AndroidPromise disableErrors() {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
         });
         return this;

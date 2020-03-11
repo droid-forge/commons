@@ -1,3 +1,16 @@
+/*
+ * Copyright 2017, Peter Vincent
+ *  Licensed under the Apache License, Version 2.0, Android Promise.
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package promise.commons.data.log;
 
 import android.os.Handler;
@@ -11,7 +24,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static promise.commons.data.log.Utils.checkNotNull;
+import promise.commons.file.Dir;
+
+import static promise.commons.util.Conditions.checkNotNull;
+
 
 /**
  * Abstract class that takes care of background threading the file log operation on Android.
@@ -52,7 +68,6 @@ public class DiskLogStrategy implements LogStrategy {
         @Override
         public void handleMessage(@NonNull Message msg) {
             String content = (String) msg.obj;
-
             FileWriter fileWriter = null;
             File logFile = getLogFile(folder, "logs");
 
@@ -83,20 +98,14 @@ public class DiskLogStrategy implements LogStrategy {
         private void writeLog(@NonNull FileWriter fileWriter, @NonNull String content) throws IOException {
             checkNotNull(fileWriter);
             checkNotNull(content);
-
             fileWriter.append(content);
         }
 
         private File getLogFile(@NonNull String folderName, @NonNull String fileName) {
             checkNotNull(folderName);
             checkNotNull(fileName);
-
+            Dir.make(folderName);
             File folder = new File(folderName);
-            if (!folder.exists()) {
-                //TODO: What if folder is not created, what happens then?
-                folder.mkdirs();
-            }
-
             int newFileCount = 0;
             File newFile;
             File existingFile = null;

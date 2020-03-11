@@ -1,3 +1,16 @@
+/*
+ * Copyright 2017, Peter Vincent
+ *  Licensed under the Apache License, Version 2.0, Android Promise.
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package promise.commons.data.log;
 
 import android.os.Environment;
@@ -12,7 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static promise.commons.data.log.Utils.checkNotNull;
+import promise.commons.Utils;
+
+import static promise.commons.util.Conditions.checkNotNull;
 
 
 /**
@@ -20,7 +35,7 @@ import static promise.commons.data.log.Utils.checkNotNull;
  * Writes to CSV the following data:
  * epoch timestamp, ISO8601 timestamp (human-readable), log level, tag, log message.
  */
-public class CsvFormatStrategy implements FormatStrategy {
+public class CSVFormatStrategy implements FormatStrategy {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String NEW_LINE_REPLACEMENT = " <br> ";
@@ -35,9 +50,8 @@ public class CsvFormatStrategy implements FormatStrategy {
     @Nullable
     private final String tag;
 
-    private CsvFormatStrategy(@NonNull Builder builder) {
+    private CSVFormatStrategy(@NonNull Builder builder) {
         checkNotNull(builder);
-
         date = builder.date;
         dateFormat = builder.dateFormat;
         logStrategy = builder.logStrategy;
@@ -68,8 +82,7 @@ public class CsvFormatStrategy implements FormatStrategy {
 
         // level
         builder.append(SEPARATOR);
-        builder.append(Utils.logLevel(priority));
-
+        builder.append(LogUtil.logLevel(priority));
         // tag
         builder.append(SEPARATOR);
         builder.append(tag);
@@ -81,10 +94,8 @@ public class CsvFormatStrategy implements FormatStrategy {
         }
         builder.append(SEPARATOR);
         builder.append(message);
-
         // new line
         builder.append(NEW_LINE);
-
         logStrategy.log(priority, tag, builder.toString());
     }
 
@@ -132,7 +143,7 @@ public class CsvFormatStrategy implements FormatStrategy {
         }
 
         @NonNull
-        public CsvFormatStrategy build() {
+        public CSVFormatStrategy build() {
             if (date == null) {
                 date = new Date();
             }
@@ -148,7 +159,7 @@ public class CsvFormatStrategy implements FormatStrategy {
                 Handler handler = new DiskLogStrategy.WriteHandler(ht.getLooper(), folder, MAX_BYTES);
                 logStrategy = new DiskLogStrategy(handler);
             }
-            return new CsvFormatStrategy(this);
+            return new CSVFormatStrategy(this);
         }
     }
 }

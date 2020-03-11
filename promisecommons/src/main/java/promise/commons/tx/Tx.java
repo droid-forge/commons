@@ -1,16 +1,14 @@
 /*
- *
- *  * Copyright 2017, Peter Vincent
- *  * Licensed under the Apache License, Version 2.0, Promise.
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  * http://www.apache.org/licenses/LICENSE-2.0
- *  * Unless required by applicable law or agreed to in writing,
- *  * software distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *
+ * Copyright 2017, Peter Vincent
+ *  Licensed under the Apache License, Version 2.0, Android Promise.
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package promise.commons.tx;
@@ -20,7 +18,7 @@ import android.os.AsyncTask;
 
 import androidx.annotation.Nullable;
 
-import promise.commons.Promise;
+import promise.commons.AndroidPromise;
 import promise.commons.model.List;
 
 /**
@@ -80,8 +78,8 @@ public abstract class Tx<RETURN, PROGRESS, ARGUMENT> implements Future {
             checkCallBacks();
             if (task != null) return;
             task = new Task();
-            if (params != null) task.executeOnExecutor(Promise.instance().executor(), params);
-            else task.executeOnExecutor(Promise.instance().executor(), (ARGUMENT) null);
+            if (params != null) task.executeOnExecutor(AndroidPromise.instance().executor(), params);
+            else task.executeOnExecutor(AndroidPromise.instance().executor(), (ARGUMENT) null);
         } catch (NoCallBacksError error) {
             error.show();
         }

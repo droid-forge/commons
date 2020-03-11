@@ -1,24 +1,27 @@
-package promise.commons.data.log;
+/*
+ * Copyright 2017, Peter Vincent
+ *  Licensed under the Apache License, Version 2.0, Android Promise.
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+package promise.commons;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
-import static promise.commons.data.log.Logger.ASSERT;
-import static promise.commons.data.log.Logger.DEBUG;
-import static promise.commons.data.log.Logger.ERROR;
-import static promise.commons.data.log.Logger.INFO;
-import static promise.commons.data.log.Logger.VERBOSE;
-import static promise.commons.data.log.Logger.WARN;
-
 /**
  * Provides convenient methods to some common operations
  */
-final class Utils {
+public final class Utils {
 
     private Utils() {
         // Hidden constructor.
@@ -30,7 +33,7 @@ final class Utils {
      * @param str the string to be examined
      * @return true if str is null or zero length
      */
-    static boolean isEmpty(CharSequence str) {
+    public static boolean isEmpty(CharSequence str) {
         return str == null || str.length() == 0;
     }
 
@@ -46,7 +49,7 @@ final class Utils {
      * NOTE: Logic slightly change due to strict policy on CI -
      * "Inner assignments should be avoided"
      */
-    static boolean equals(CharSequence a, CharSequence b) {
+    public static boolean equals(CharSequence a, CharSequence b) {
         if (a == b) return true;
         if (a != null && b != null) {
             int length = a.length();
@@ -70,7 +73,7 @@ final class Utils {
      *
      * @return Stack trace in form of String
      */
-    static String getStackTraceString(Throwable tr) {
+    public static String getStackTraceString(Throwable tr) {
         if (tr == null) {
             return "";
         }
@@ -90,25 +93,6 @@ final class Utils {
         tr.printStackTrace(pw);
         pw.flush();
         return sw.toString();
-    }
-
-    static String logLevel(int value) {
-        switch (value) {
-            case VERBOSE:
-                return "VERBOSE";
-            case DEBUG:
-                return "DEBUG";
-            case INFO:
-                return "INFO";
-            case WARN:
-                return "WARN";
-            case ERROR:
-                return "ERROR";
-            case ASSERT:
-                return "ASSERT";
-            default:
-                return "UNKNOWN";
-        }
     }
 
     public static String toString(Object object) {
@@ -146,13 +130,5 @@ final class Utils {
             return Arrays.deepToString((Object[]) object);
         }
         return "Couldn't find a correct type for the object";
-    }
-
-    @NonNull
-    static <T> T checkNotNull(@Nullable final T obj) {
-        if (obj == null) {
-            throw new NullPointerException();
-        }
-        return obj;
     }
 }

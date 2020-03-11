@@ -4,9 +4,9 @@
 
 The base promise library
 
-# Setup
+### Setup
 - 
-#### build.gradle
+##### build.gradle
 ```
 allprojects {
     repositories {
@@ -16,45 +16,58 @@ allprojects {
 }
 
 android {
+    ...
     compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
-        }
+    }
+    ...
 }
 
 dependencies {
+     ...
      implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
      implementation 'androidx.appcompat:appcompat:1.0.2'
+     implementation 'com.github.android-promise:commons:TAG'
 }
 
 ```
 
-# Initialization
+### Initialization
 Initialize Promise in your main application file, entry point
 
-#### App.java
+##### App.java
 ```java
   @Override
   public void onCreate() {
     super.onCreate();
-    Promise.init(this, 50);
+    Promise.init(this);
   }
 ```
-#### Stay Updated
 
-# Wiki!
-I strongly recommend to read the **[Wiki](https://github.com/android-promise/commons/wiki) pages**, where you can find a comprehensive Tutorial.<br/>
+### Table of Contents
+**[Logging](###Logging)**<br>
+**[Files](###Files)**<br>
+**[Collections](###Collections)**<br>
+**[Preferences](###Preferences)**<br>
+**[Caching](###Caching)**<br>
+**[Tasks](###Tasks)**<br>
+
+### Logging
+
+
+
+# Developed By
+* Peter Vincent - <dev4vin@gmail.com>
 
 ### Pull requests / Issues / Improvement requests
 Feel free to contribute and ask!<br/>
 
 # License
 
-#### Android Promise
-
     Copyright 2018 Peter Vincent
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 Android Promise;
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
@@ -65,4 +78,5 @@ Feel free to contribute and ask!<br/>
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 
