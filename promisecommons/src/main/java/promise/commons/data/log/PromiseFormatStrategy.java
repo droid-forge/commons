@@ -1,40 +1,26 @@
+/*
+ * Copyright 2017, Peter Vincent
+ *  Licensed under the Apache License, Version 2.0, Android Promise.
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package promise.commons.data.log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static promise.commons.data.log.Utils.checkNotNull;
+import promise.commons.Utils;
 
-/**
- * Draws borders around the given log message along with additional information such as :
- *
- * <ul>
- * <li>Thread information</li>
- * <li>Method stack trace</li>
- * </ul>
- *
- * <pre>
- *  ┌──────────────────────────
- *  │ Method stack history
- *  ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
- *  │ Thread information
- *  ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
- *  │ Log message
- *  └──────────────────────────
- * </pre>
- *
- * <h3>Customize</h3>
- * <pre><code>
- *   FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
- *       .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
- *       .methodCount(0)         // (Optional) How many method line to show. Default 2
- *       .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
- *       .logStrategy(customLog) // (Optional) Changes the log strategy to print out. Default LogCat
- *       .tag("My custom tag")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
- *       .build();
- * </code></pre>
- */
-public class PrettyFormatStrategy implements FormatStrategy {
+import static promise.commons.util.Conditions.checkNotNull;
+
+public class PromiseFormatStrategy implements FormatStrategy {
 
     /**
      * Android's max limit for a log entry is ~4076 bytes,
@@ -69,7 +55,7 @@ public class PrettyFormatStrategy implements FormatStrategy {
     @Nullable
     private final String tag;
 
-    private PrettyFormatStrategy(@NonNull Builder builder) {
+    private PromiseFormatStrategy(@NonNull Builder builder) {
         checkNotNull(builder);
 
         methodCount = builder.methodCount;
@@ -104,9 +90,7 @@ public class PrettyFormatStrategy implements FormatStrategy {
             logBottomBorder(priority, tag);
             return;
         }
-        if (methodCount > 0) {
-            logDivider(priority, tag);
-        }
+        if (methodCount > 0) logDivider(priority, tag);
         for (int i = 0; i < length; i += CHUNK_SIZE) {
             int count = Math.min(length - i, CHUNK_SIZE);
             //create a new String with system's default charset (which is UTF-8 for Android)
@@ -131,15 +115,10 @@ public class PrettyFormatStrategy implements FormatStrategy {
         int stackOffset = getStackOffset(trace) + methodOffset;
 
         //corresponding method count with the current stack may exceeds the stack trace. Trims the count
-        if (methodCount + stackOffset > trace.length) {
-            methodCount = trace.length - stackOffset - 1;
-        }
-
+        if (methodCount + stackOffset > trace.length) methodCount = trace.length - stackOffset - 1;
         for (int i = methodCount; i > 0; i--) {
             int stackIndex = i + stackOffset;
-            if (stackIndex >= trace.length) {
-                continue;
-            }
+            if (stackIndex >= trace.length) continue;
             StringBuilder builder = new StringBuilder();
             builder.append(HORIZONTAL_LINE)
                     .append(' ')
@@ -170,9 +149,7 @@ public class PrettyFormatStrategy implements FormatStrategy {
         checkNotNull(chunk);
 
         String[] lines = chunk.split(System.getProperty("line.separator"));
-        for (String line : lines) {
-            logChunk(logType, tag, HORIZONTAL_LINE + " " + line);
-        }
+        for (String line : lines) logChunk(logType, tag, HORIZONTAL_LINE + " " + line);
     }
 
     private void logChunk(int priority, @Nullable String tag, @NonNull String chunk) {
@@ -200,18 +177,17 @@ public class PrettyFormatStrategy implements FormatStrategy {
         for (int i = MIN_STACK_OFFSET; i < trace.length; i++) {
             StackTraceElement e = trace[i];
             String name = e.getClassName();
-            if (!name.equals(LoggerPrinter.class.getName()) && !name.equals(Logger.class.getName())) {
+            if (!name.equals(LoggerPrinter.class.getName())
+                && !name.equals(LogUtil.class.getName()))
                 return --i;
-            }
         }
         return -1;
     }
 
     @Nullable
     private String formatTag(@Nullable String tag) {
-        if (!Utils.isEmpty(tag) && !Utils.equals(this.tag, tag)) {
+        if (!Utils.isEmpty(tag) && Utils.notEquals(this.tag, tag))
             return this.tag + "-" + tag;
-        }
         return this.tag;
     }
 
@@ -222,7 +198,7 @@ public class PrettyFormatStrategy implements FormatStrategy {
         @Nullable
         LogStrategy logStrategy;
         @Nullable
-        String tag = "PRETTY_LOGGER";
+        String tag = LogUtil.makeTag(LogUtil.class);
 
         private Builder() {
         }
@@ -258,11 +234,9 @@ public class PrettyFormatStrategy implements FormatStrategy {
         }
 
         @NonNull
-        public PrettyFormatStrategy build() {
-            if (logStrategy == null) {
-                logStrategy = new LogcatLogStrategy();
-            }
-            return new PrettyFormatStrategy(this);
+        public PromiseFormatStrategy build() {
+            if (logStrategy == null) logStrategy = new LogcatLogStrategy();
+            return new PromiseFormatStrategy(this);
         }
     }
 

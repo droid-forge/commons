@@ -19,10 +19,6 @@ import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
-/**
- * Created on 6/19/18 by yoctopus.
- */
-
 public class Message implements Serializable {
     private String sender;
     private Object message;

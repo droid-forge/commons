@@ -5,20 +5,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
-import promise.commons.PromiseCallback
-import promise.commons.data.log.AndroidLogAdapter
-import promise.commons.data.log.Logger
+import promise.commons.tx.PromiseCallback
+import promise.commons.data.log.CommonLogAdapter
+import promise.commons.data.log.LogUtil
 import promise.commons.makeInstance
 import promise.commons.pref.Preferences
-import promise.commons.tx.Tx
-import promise.commons.tx.Tx.CallBackExecutor
-import promise.commons.tx.TxManager
+import promise.commons.tx.Transaction
+import promise.commons.tx.Transaction.CallBackExecutor
+import promise.commons.tx.TransactionManager
 
 class MainActivity : AppCompatActivity() {
 
     private val preferences = makeInstance(Preferences::class, arrayOf(PREFERENCE_NAME)) as Preferences
 
-    private val tx = object : Tx<String, String, String>() {
+    private val transaction = object : Transaction<String, String, String>() {
         /**
          * gets the callback methods used for executing the transaction
          * @return a callbacks object
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
              * @return a progress of the result
              */
             override fun onCalculateProgress(t: String?): String {
-                Logger.d(t!!)
+                LogUtil.d(TAG, " on progress ",t!!)
                 return t
             }
 
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Logger.addLogAdapter(AndroidLogAdapter())
+        LogUtil.addLogAdapter(CommonLogAdapter())
 
         preferences.save(ArrayMap<String, Any>().apply {
             put("somekey", "key0")
@@ -81,13 +81,13 @@ class MainActivity : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         PromiseCallback<Array<String>> { resolve, _ ->
-            resolve(arrayOf("somekey", "somekey1",
+                resolve(arrayOf("somekey", "somekey1",
                     "somekey2", "somekey3",
                     "somekey4", "somekey5"))
-        }
+            }
         .then {
             title_textview.text = "Started reading"
-            TxManager.instance().execute(tx.complete {
+            TransactionManager.instance().execute(transaction.complete {
                 preferences_textview.text = it.reverse().toString()
             }, Pair(it, 1000))
             null
@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        val TAG = LogUtil.makeTag(MainActivity::class.java)
         const val PREFERENCE_NAME = "pref_name"
     }
 }

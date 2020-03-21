@@ -21,7 +21,7 @@ import promise.commons.data.log.LogUtil;
  * Created by octopus on 10/16/16.
  */
 class NoCallBacksError extends Exception {
-    NoCallBacksError(String message) {
+    private NoCallBacksError(String message) {
         super(message);
     }
 

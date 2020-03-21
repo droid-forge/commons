@@ -25,11 +25,11 @@ import promise.commons.model.List;
 /**
  * manages all execution of tx instances
  */
-public class TxManager {
+public class TransactionManager {
     /**
-     * pool of all {@link Tx instances}
+     * pool of all {@link Transaction instances}
      */
-    private LinkedList<Pair<Tx, Pair<Object[], Long>>> queue;
+    private LinkedList<Pair<Transaction, Pair<Object[], Long>>> queue;
     /**
      * flag for when manger is executing tx instances
      */
@@ -38,7 +38,7 @@ public class TxManager {
     /**
      * initializes the queue pool
      */
-    TxManager() {
+    TransactionManager() {
         queue = new LinkedList<>();
     }
 
@@ -48,24 +48,24 @@ public class TxManager {
      *
      * @return tx manager
      */
-    public static TxManager instance() {
+    public static TransactionManager instance() {
         try {
-            return SingletonInstanceProvider.provider(TxManagerProvider.instance()).get();
+            return SingletonInstanceProvider.provider(TransactionManagerInstanceProvider.instance()).get();
         } catch (IllegalAccessException e) {
-            TxManagerProvider.create();
+            TransactionManagerInstanceProvider.create();
             return instance();
         }
     }
 
     /**
-     * schedules a {@link Tx instance} on the pool and executes it
+     * schedules a {@link Transaction instance} on the pool and executes it
      *
      * @param pairs pairs of transactions with their arguments
      */
     @SafeVarargs
-    public final void executeTasks(Pair<Tx, Pair<Object[], Long>>... pairs) {
-        List<? extends Pair<Tx, Pair<Object[], Long>>> pairs1 = List.fromArray(pairs);
-        if (pairs1.anyMatch(pair -> pair.first instanceof TimedTx))
+    public final void executeTasks(Pair<Transaction, Pair<Object[], Long>>... pairs) {
+        List<? extends Pair<Transaction, Pair<Object[], Long>>> pairs1 = List.fromArray(pairs);
+        if (pairs1.anyMatch(pair -> pair.first instanceof TimedTransaction))
             throw new RuntimeException("TxManager doesn't support execution of timed operations yet");
         if (queue == null) return;
         queue.addAll(pairs1);
@@ -73,11 +73,11 @@ public class TxManager {
         cycle();
     }
 
-    public final void execute(Tx tx, Pair<Object[], Long> pair) {
-        if (tx instanceof TimedTx)
+    public final void execute(Transaction transaction, Pair<Object[], Long> pair) {
+        if (transaction instanceof TimedTransaction)
             throw new RuntimeException("TxManager doesn't support execution of timed operations yet");
         if (queue == null) return;
-        queue.add(new Pair<>(tx, pair));
+        queue.add(new Pair<>(transaction, pair));
         if (running) return;
         cycle();
     }
@@ -95,14 +95,10 @@ public class TxManager {
             queue.removeFirst();
             if (!queue.isEmpty()) cycle();
         });
-
         Pair<Object[], Long> args = queue.peekFirst().second;
-        Tx tx = queue.peekFirst().first;
-        if (args == null) {
-            tx.execute(null);
-        } else if (args.second != null) tx.execute(args.first, args.second);
-        else {
-            tx.execute(args.first);
-        }
+        Transaction transaction = queue.peekFirst().first;
+        if (args == null) transaction.execute(null);
+        else if (args.second != null) transaction.execute(args.first, args.second);
+        else transaction.execute(args.first);
     }
 }

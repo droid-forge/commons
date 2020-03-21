@@ -11,18 +11,8 @@
  *  limitations under the License.
  */
 
-package promise.commons.data.log;
+package promise.commons.tx
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-/**
- * Used to determine how messages should be printed or saved.
- *
- * @see PromiseFormatStrategy
- * @see CSVFormatStrategy
- */
-public interface FormatStrategy {
-
-    void log(int priority, @Nullable String tag, @NonNull String message);
+interface Resolver<in R> {
+  fun resolve(result: R, error: RuntimeException?)
 }

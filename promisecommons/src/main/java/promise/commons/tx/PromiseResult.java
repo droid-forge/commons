@@ -13,7 +13,7 @@
  *
  */
 
-package promise.commons.model;
+package promise.commons.tx;
 
 import promise.commons.data.log.LogUtil;
 
@@ -23,8 +23,8 @@ import promise.commons.data.log.LogUtil;
  * @param <T> result type
  * @param <E> error type
  */
-public class Result<T, E extends Throwable> {
-    private final String TAG = LogUtil.makeTag(Result.class);
+public class PromiseResult<T, E extends Throwable> {
+    private final String TAG = LogUtil.makeTag(PromiseResult.class);
     /**
      * response callback
      *
@@ -44,13 +44,13 @@ public class Result<T, E extends Throwable> {
      * @param response callback for response
      * @return result with response callback
      */
-    public Result<T, E> withCallBack(Response<? super T, ? extends E> response) {
+    public PromiseResult<T, E> withCallback(Response<? super T, ? extends E> response) {
         this.response = response;
         return this;
     }
 
-    public Result<T, E> withUICallback(Response<? super T, ? extends E> response,
-                                       Error<? super E> error) {
+    public PromiseResult<T, E> withUICallback(Response<? super T, ? extends E> response,
+                                              Error<? super E> error) {
         this.response = new UIResponse<T, E>(response, error);
         return this;
     }
@@ -61,7 +61,7 @@ public class Result<T, E extends Throwable> {
      * @param error callback for error
      * @return result with error callback
      */
-    public Result<T, E> withErrorCallBack(Error<? super E> error) {
+    public PromiseResult<T, E> withErrorCallback(Error<? super E> error) {
         this.error = error;
         return this;
     }
@@ -73,14 +73,13 @@ public class Result<T, E extends Throwable> {
      * @param <R> type of response
      */
     public <R extends T> void response(R t) {
-        if (response != null) {
-            try {
-                response.onResponse(t);
-            } catch (Throwable e) {
-                LogUtil.e(TAG, e);
-                error((E) e);
-            }
-        } else LogUtil.e(TAG,
+        if (response != null) try {
+            response.onResponse(t);
+        } catch (Throwable e) {
+            LogUtil.e(TAG, e);
+            error((E) e);
+        }
+        else LogUtil.e(TAG,
                 new IllegalStateException("Could not pass data: " + t +
                     " , response not provided"));
     }

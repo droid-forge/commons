@@ -15,20 +15,32 @@ package promise.commons.data.log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import promise.commons.util.Conditions;
 
-import static promise.commons.util.Conditions.checkNotNull;
-
-public class DiskLogAdapter implements LogAdapter {
+/**
+ * Android terminal log output implementation for {@link LogAdapter}.
+ * <p>
+ * Prints output to LogCat with pretty borders.
+ *
+ * <pre>
+ *  ┌──────────────────────────
+ *  │ Method stack history
+ *  ├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+ *  │ Log message
+ *  └──────────────────────────
+ * </pre>
+ */
+public class CommonLogAdapter implements LogAdapter {
 
     @NonNull
     private final FormatStrategy formatStrategy;
 
-    public DiskLogAdapter() {
-        formatStrategy = CSVFormatStrategy.newBuilder().build();
+    public CommonLogAdapter() {
+        this.formatStrategy = PromiseFormatStrategy.newBuilder().build();
     }
 
-    public DiskLogAdapter(@NonNull FormatStrategy formatStrategy) {
-        this.formatStrategy = checkNotNull(formatStrategy);
+    public CommonLogAdapter(@NonNull FormatStrategy formatStrategy) {
+        this.formatStrategy = Conditions.checkNotNull(formatStrategy);
     }
 
     @Override
@@ -40,4 +52,5 @@ public class DiskLogAdapter implements LogAdapter {
     public void log(int priority, @Nullable String tag, @NonNull String message) {
         formatStrategy.log(priority, tag, message);
     }
+
 }

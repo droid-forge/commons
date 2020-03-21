@@ -17,13 +17,13 @@ package promise.commons.tx;
 
 import androidx.annotation.Nullable;
 
-import promise.commons.Promise;
+import promise.commons.AndroidPromise;
 
 /**
  * executes the given callback after wait millis
- * {@link Tx}
+ * {@link Transaction}
  */
-public abstract class TimedTx<RETURN, PROGRESS, ARGUMENT> extends Tx<RETURN, PROGRESS, ARGUMENT> {
+public abstract class TimedTransaction<RETURN, PROGRESS, ARGUMENT> extends Transaction<RETURN, PROGRESS, ARGUMENT> {
     /**
      * should not be called on this instance since the execution must be scheduled for the future
      *
@@ -44,7 +44,7 @@ public abstract class TimedTx<RETURN, PROGRESS, ARGUMENT> extends Tx<RETURN, PRO
     public void execute(@Nullable ARGUMENT[] params, long millis) {
         if (millis < 1)
             throw new IllegalArgumentException("wait millis time must be more than zero");
-        Promise.instance().execute(() -> {
+        AndroidPromise.instance().execute(() -> {
             try {
                 Thread.sleep(millis);
                 super.execute(params);

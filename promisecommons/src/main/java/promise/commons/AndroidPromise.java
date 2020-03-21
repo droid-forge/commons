@@ -36,14 +36,14 @@ import io.reactivex.subjects.PublishSubject;
 import promise.commons.data.log.LogUtil;
 import promise.commons.model.List;
 import promise.commons.model.Message;
-import promise.commons.model.Result;
+import promise.commons.tx.PromiseResult;
 import promise.commons.model.function.MapFunction;
 import promise.commons.util.Conditions;
 
 /**
  *
  */
-public class Promise {
+public class AndroidPromise {
     /**
      *
      */
@@ -51,7 +51,7 @@ public class Promise {
     /**
      *
      */
-    private static final String TAG = LogUtil.makeTag(Promise.class);
+    private static String TAG;
     /**
      *
      */
@@ -60,6 +60,8 @@ public class Promise {
      *
      */
     private ExecutorService executor;
+
+    public boolean enableDebug;
     /**
      *
      */
@@ -80,7 +82,7 @@ public class Promise {
     /**
      * @param context
      */
-    Promise(Application context) {
+    AndroidPromise(Application context) {
         this.context = context;
         disposable = new CompositeDisposable();
     }
@@ -89,15 +91,17 @@ public class Promise {
      * initialize promise with only application instance and single threaded environment
      *
      * @param context application
-     * @return promise or throws error if already created
      */
-    public static Promise init(Application context) {
+    public static void init(Application context, boolean enableDebug) {
         try {
-            PromiseProvider.instance();
+            AndroidPromiseInstanceProvider.instance();
             throw new IllegalStateException("Promise can only be instantiated once");
         } catch (IllegalAccessException ignored) {
             initializeRxUndeliverableError();
-            return SingletonInstanceProvider.provider(PromiseProvider.create(ApplicationProvider.create(context))).get();
+            SingletonInstanceProvider.provider(
+                AndroidPromiseInstanceProvider.create(
+                    ApplicationInstanceProvider.create(context), enableDebug)).get();
+            TAG = LogUtil.makeTag(AndroidPromise.class);
         }
     }
 
@@ -106,15 +110,18 @@ public class Promise {
      *
      * @param context      application
      * @param numOfThreads threads to use in background tasks
-     * @return promise instance or throw an error if already created
      */
-    public static Promise init(Application context, int numOfThreads) {
+    public static void init(Application context, int numOfThreads, boolean enableDebug) {
         try {
-            PromiseProvider.instance();
+            AndroidPromiseInstanceProvider.instance();
             throw new IllegalStateException("Promise can only be instantiated once");
         } catch (IllegalAccessException ignored) {
             initializeRxUndeliverableError();
-            return SingletonInstanceProvider.provider(PromiseProvider.create(ApplicationProvider.create(context), numOfThreads)).get();
+             SingletonInstanceProvider.provider(
+                 AndroidPromiseInstanceProvider.create(
+                     ApplicationInstanceProvider.create(context),
+                     numOfThreads, enableDebug)).get();
+            TAG = LogUtil.makeTag(AndroidPromise.class);
         }
     }
 
@@ -127,12 +134,10 @@ public class Promise {
         });
     }
 
-    /**
-     * @return
-     */
-    public static Promise instance() {
+    public static AndroidPromise instance() {
         try {
-            return SingletonInstanceProvider.provider(PromiseProvider.instance()).get();
+            return SingletonInstanceProvider.provider(
+                AndroidPromiseInstanceProvider.instance()).get();
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -151,7 +156,7 @@ public class Promise {
      * @param callBack
      * @return
      */
-    public int listen(final String sender, final Result<Object, Throwable> callBack) {
+    public int listen(final String sender, final PromiseResult<Object, Throwable> callBack) {
         if (bus == null) bus = PublishSubject.create();
         if (disposables == null) disposables = new List<>();
         disposables.add(
@@ -191,15 +196,14 @@ public class Promise {
      * @param threads
      * @return
      */
-    Promise threads(int threads) {
+    AndroidPromise threads(int threads) {
         if (executor == null) executor = Executors.newFixedThreadPool(threads);
         return this;
     }
-
     /**
      * @return
      */
-    public Promise disableErrors() {
+    public AndroidPromise disableErrors() {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
         });
         return this;
@@ -257,11 +261,11 @@ public class Promise {
 
     /**
      * @param action
-     * @param result
+     * @param promiseResult
      * @param <T>
      */
     public <T> void execute(
-            final Callable<T> action, final Result<T, Throwable> result) {
+            final Callable<T> action, final PromiseResult<T, Throwable> promiseResult) {
         if (disposables == null) disposables = new List<>();
         disposables.add(
                 Observable.fromCallable(
@@ -269,8 +273,8 @@ public class Promise {
                         .observeOn(Schedulers.from(executor()))
                         .subscribeOn(Schedulers.from(executor()))
                         .subscribe(
-                                result::response,
-                                result::error));
+                                promiseResult::response,
+                                promiseResult::error));
         disposable.add(Conditions.checkNotNull(disposables.last()));
     }
 
@@ -305,10 +309,10 @@ public class Promise {
 
     /**
      * @param actions
-     * @param result
+     * @param promiseResult
      */
     public void execute(
-            final List<Callable<?>> actions, final Result<List<?>, Throwable> result) {
+            final List<Callable<?>> actions, final PromiseResult<List<?>, Throwable> promiseResult) {
         if (disposables == null) disposables = new List<>();
         disposables.add(
                 Observable.zip(
@@ -324,9 +328,17 @@ public class Promise {
                         .observeOn(Schedulers.from(executor()))
                         .subscribeOn(Schedulers.from(executor()))
                         .subscribe(
-                                result::response,
-                                result::error));
+                                promiseResult::response,
+                                promiseResult::error));
         disposable.add(Conditions.checkNotNull(disposables.last()));
+    }
+
+    public CompositeDisposable getCompositeDisposable() {
+        return disposable;
+    }
+
+    public Application getApplication() {
+        return context;
     }
 
     /**

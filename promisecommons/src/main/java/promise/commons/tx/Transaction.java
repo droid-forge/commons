@@ -20,7 +20,7 @@ import android.os.AsyncTask;
 
 import androidx.annotation.Nullable;
 
-import promise.commons.Promise;
+import promise.commons.AndroidPromise;
 import promise.commons.model.List;
 
 /**
@@ -30,7 +30,7 @@ import promise.commons.model.List;
  * @param <PROGRESS> progress of the execution
  * @param <ARGUMENT> argument for each execution
  */
-public abstract class Tx<RETURN, PROGRESS, ARGUMENT> implements Future {
+public abstract class Transaction<RETURN, PROGRESS, ARGUMENT> implements Future {
     /**
      * action executor
      * {@link Task}
@@ -64,7 +64,7 @@ public abstract class Tx<RETURN, PROGRESS, ARGUMENT> implements Future {
     /**
      * initializes the callback, progress and complete listeners
      */
-    public Tx() {
+    public Transaction() {
         callBackExecutor = getCallBackExecutor();
         progress = getProgress();
         complete = new List<>();
@@ -80,8 +80,8 @@ public abstract class Tx<RETURN, PROGRESS, ARGUMENT> implements Future {
             checkCallBacks();
             if (task != null) return;
             task = new Task();
-            if (params != null) task.executeOnExecutor(Promise.instance().executor(), params);
-            else task.executeOnExecutor(Promise.instance().executor(), (ARGUMENT) null);
+            if (params != null) task.executeOnExecutor(AndroidPromise.instance().executor(), params);
+            else task.executeOnExecutor(AndroidPromise.instance().executor(), (ARGUMENT) null);
         } catch (NoCallBacksError error) {
             error.show();
         }
@@ -171,7 +171,7 @@ public abstract class Tx<RETURN, PROGRESS, ARGUMENT> implements Future {
      *                 {@link Complete}   *
      * @return an executioner with the callback
      */
-    public Tx complete(Complete<RETURN> complete) {
+    public Transaction complete(Complete<RETURN> complete) {
         if (this.complete == null)
             this.complete = new List<>();
         this.complete.add(complete);
@@ -247,12 +247,10 @@ public abstract class Tx<RETURN, PROGRESS, ARGUMENT> implements Future {
             if (params != null && params.length > 0) {
                 List<RETURN> returns = new List<>();
                 for (ARGUMENT param : params) {
-                    if (millis > 0) {
-                        try {
-                            Thread.sleep(millis);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    if (millis > 0) try {
+                        Thread.sleep(millis);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                     RETURN val = callBackExecutor.onExecute(param);
                     if (progress != null) publishProgress(progress.onCalculateProgress(val));
@@ -290,7 +288,7 @@ public abstract class Tx<RETURN, PROGRESS, ARGUMENT> implements Future {
         @Override
         protected void onPostExecute(List<RETURN> RETURNS) {
             super.onPostExecute(RETURNS);
-            Tx.this.finalize(RETURNS);
+            Transaction.this.finalize(RETURNS);
         }
     }
 }

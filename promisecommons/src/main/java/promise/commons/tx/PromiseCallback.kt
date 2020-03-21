@@ -1,4 +1,4 @@
-package promise.commons
+package promise.commons.tx
 
 import promise.commons.data.log.LogUtil
 import promise.commons.model.List
@@ -102,7 +102,7 @@ class PromiseCallback<RESULT>(private val resultConsumer: (resolve: (RESULT) -> 
     }
 
     companion object {
-        val TAG = LogUtil.makeTag(PromiseCallback::class.java)
+        val TAG: String = LogUtil.makeTag(PromiseCallback::class.java)
     }
 
 }

@@ -2,18 +2,18 @@ package promise.commons;
 
 import android.app.Application;
 
-class ApplicationProvider implements InstanceProvider<Application> {
+class ApplicationInstanceProvider implements InstanceProvider<Application> {
 
-    private static ApplicationProvider instance;
+    private static ApplicationInstanceProvider instance;
 
     private final Application applicationInstanceProvider;
 
-    private ApplicationProvider(Application applicationInstanceProvider) {
+    private ApplicationInstanceProvider(Application applicationInstanceProvider) {
         this.applicationInstanceProvider = applicationInstanceProvider;
     }
 
-    static ApplicationProvider create(Application applicationInstanceProvider) {
-        if (instance == null) instance = new ApplicationProvider(applicationInstanceProvider);
+    static ApplicationInstanceProvider create(Application applicationInstanceProvider) {
+        if (instance == null) instance = new ApplicationInstanceProvider(applicationInstanceProvider);
         return instance;
     }
 

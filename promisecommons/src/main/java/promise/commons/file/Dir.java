@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import promise.commons.AndroidPromise;
 import promise.commons.data.log.LogUtil;
 
 public class Dir {
@@ -52,9 +53,9 @@ public class Dir {
         return true;
     }
 
-    public static void clearAppData(Context context) {
+    public static void clearAppData() {
         try {
-            String packageName = context.getApplicationContext().getPackageName();
+            String packageName = AndroidPromise.instance().getApplication().getPackageName();
             Runtime runtime = Runtime.getRuntime();
             runtime.exec("pm clear " + packageName);
 
