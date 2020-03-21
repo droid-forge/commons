@@ -35,7 +35,7 @@ import static promise.commons.util.Conditions.checkNotNull;
  * Writes to CSV the following data:
  * epoch timestamp, ISO8601 timestamp (human-readable), log level, tag, log message.
  */
-public class CSVFormatStrategy implements FormatStrategy {
+public class CsvFormatStrategy implements FormatStrategy {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String NEW_LINE_REPLACEMENT = " <br> ";
@@ -50,7 +50,7 @@ public class CSVFormatStrategy implements FormatStrategy {
     @Nullable
     private final String tag;
 
-    private CSVFormatStrategy(@NonNull Builder builder) {
+    private CsvFormatStrategy(@NonNull Builder builder) {
         checkNotNull(builder);
         date = builder.date;
         dateFormat = builder.dateFormat;
@@ -140,7 +140,7 @@ public class CSVFormatStrategy implements FormatStrategy {
         }
 
         @NonNull
-        public CSVFormatStrategy build() {
+        public CsvFormatStrategy build() {
             if (date == null) date = new Date();
             if (dateFormat == null)
                 dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS", Locale.UK);
@@ -153,7 +153,7 @@ public class CSVFormatStrategy implements FormatStrategy {
                 Handler handler = new DiskLogStrategy.WriteHandler(ht.getLooper(), folder, MAX_BYTES);
                 logStrategy = new DiskLogStrategy(handler);
             }
-            return new CSVFormatStrategy(this);
+            return new CsvFormatStrategy(this);
         }
     }
 }

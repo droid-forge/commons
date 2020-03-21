@@ -24,7 +24,7 @@ public class DiskLogAdapter implements LogAdapter {
     private final FormatStrategy formatStrategy;
 
     public DiskLogAdapter() {
-        formatStrategy = CSVFormatStrategy.newBuilder().build();
+        formatStrategy = CsvFormatStrategy.newBuilder().build();
     }
 
     public DiskLogAdapter(@NonNull FormatStrategy formatStrategy) {

@@ -20,7 +20,7 @@ import androidx.annotation.Nullable;
  * Used to determine how messages should be printed or saved.
  *
  * @see PromiseFormatStrategy
- * @see CSVFormatStrategy
+ * @see CsvFormatStrategy
  */
 public interface FormatStrategy {
 
