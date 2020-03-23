@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
+import promise.commons.AndroidPromise
 import promise.commons.data.log.CommonLogAdapter
 import promise.commons.data.log.LogUtil
 import promise.commons.makeInstance
@@ -34,6 +35,7 @@ interface FakeStringsRepo {
 
 class FakeRepositoryImpl : FakeStringsRepo {
   override fun getStrings(): Either<Array<String>, Throwable> = AsyncEither { resolve, _ ->
+    Thread.sleep(5000)
     resolve(arrayOf("somekey", "somekey1",
         "somekey2", "somekey3",
         "somekey4", "somekey5"))
@@ -107,12 +109,14 @@ class MainActivity : AppCompatActivity() {
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     val fakeStringsRepo: FakeStringsRepo = FakeRepositoryImpl()
-    fakeStringsRepo.getStrings()
-        .fold({
-          TransactionManager.instance().execute(transaction.complete {
-            preferences_textview.text = it.reverse().toString()
-          }, Pair(it, 1000))
-        })
+
+    AndroidPromise.instance().execute {
+      val strings = fakeStringsRepo.getStrings().foldSync()
+      TransactionManager.instance().execute(transaction.complete {
+        preferences_textview.text = it.reverse().toString()
+      }, Pair(strings, 1000))
+    }
+
     /*fakeStringsRepo.getStrings().fold()
 
         .then { strings ->

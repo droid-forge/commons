@@ -13,10 +13,10 @@
 
 package promise.commons.tx
 
+import android.os.Looper
 import promise.commons.AndroidPromise
 import promise.commons.data.log.LogUtil
-
-data class Data<T : Any, E : Throwable>(val t: T?, val e: E)
+import java.lang.RuntimeException
 
 /**
  *
@@ -36,7 +36,7 @@ interface Either<T : Any, E : Throwable> {
       err: ((e: E) -> Unit)? = null)
 
   @Throws(Throwable::class)
-  fun foldSync(): Pair<T?, E?>
+  fun foldSync(): T?
 
   fun foldOnUI(
       /**
@@ -72,7 +72,12 @@ interface Either<T : Any, E : Throwable> {
    */
   fun foldToPromise(): Promise<T?>
 
+  /**
+   *
+   */
   fun foldToPromiseOnUI(): Promise<T?>
+
+
 }
 
 /**
@@ -111,9 +116,9 @@ sealed class SyncEither<T : Any, E : Throwable>(
   }
 
   @Throws(Exception::class)
-  override fun foldSync(): Pair<T?, E?> = when {
-    t != null -> Pair(t, null)
-    e != null -> Pair(null, e)
+  override fun foldSync(): T? = when {
+    t != null -> t
+    e != null -> throw e
     else -> throw Exception("no data to unfold")
   }
 
@@ -297,7 +302,7 @@ class AsyncEither<T : Any, E : Throwable>(
      */
     val t: (resolve: (T?) -> Unit, reject: (E?) -> Unit) -> Unit) : Either<T, E> {
 
-
+  private var syncAdapter: SyncAdapter<T>? = null
   /**
    *
    */
@@ -365,8 +370,17 @@ class AsyncEither<T : Any, E : Throwable>(
   }
 
   @Throws(Exception::class)
-  override fun foldSync(): Pair<T?, E?> {
-    throw Exception("Not implemented in async either")
+  override fun foldSync(): T? {
+    if (Thread.currentThread() == Looper.getMainLooper().thread) throw RuntimeException("cant be called from main thread")
+    if (syncAdapter == null) {
+      syncAdapter = SyncAdapter()
+      fold({
+        syncAdapter!!.set(it)
+      },{
+        syncAdapter!!.setException(it)
+      })
+    }
+    return syncAdapter!!.get()
   }
 
   /**
