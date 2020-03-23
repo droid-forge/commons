@@ -1,17 +1,21 @@
 /*
  * Copyright 2017, Peter Vincent
- *  Licensed under the Apache License, Version 2.0, Android Promise.
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Licensed under the Apache License, Version 2.0, Android Promise.
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package promise.commons.tx;
+
+import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +24,42 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import promise.commons.AndroidPromise;
 
+/**
+ * @param <R>
+ */
 public class Promise<R> {
+  /**
+   *
+   */
   private static final AndroidPromise instance = AndroidPromise.instance();
+  /**
+   *
+   */
   private State state;
+  /**
+   *
+   */
   private R result;
-  private RuntimeException error;
-  private List<Resolver> handlers = new ArrayList<>();
+  /**
+   *
+   */
+  private Throwable error;
+  /**
+   *
+   */
+  private List<Resolver> handlers = new promise.commons.model.List<>();
 
+  /**
+   *
+   */
   public Promise() {
     this.state = State.Fulfilled;
   }
 
+  /**
+   * @param callback
+   * @param <A>
+   */
   public <A> Promise(final CallbackWithResolver<? super A, R> callback) {
     this.state = State.Pending;
     final Resolver<? super R> finalResolver = (result, error) -> {
@@ -73,6 +102,11 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param delayMillis
+   * @param callback
+   * @param <A>
+   */
   public <A> Promise(final long delayMillis, final CallbackWithResolver<? super A, R> callback) {
     this((CallbackWithResolver<A, R>) (arg, resolver) -> instance.execute(() -> {
       try {
@@ -83,6 +117,11 @@ public class Promise<R> {
     }, delayMillis));
   }
 
+  /**
+   * @param delayMillis
+   * @param callback
+   * @param <A>
+   */
   public <A> Promise(final long delayMillis, final Callback2<? super A, ? extends R> callback) {
     this((arg, resolver) -> instance.execute(() -> {
       try {
@@ -93,6 +132,11 @@ public class Promise<R> {
     }, delayMillis));
   }
 
+  /**
+   * @param delayMillis
+   * @param callback
+   * @param <A>
+   */
   public <A> Promise(final long delayMillis, final VoidArgCallback<? extends R> callback) {
     this((CallbackWithResolver<A, R>) (arg, resolver) -> instance.execute(() -> {
       try {
@@ -103,6 +147,10 @@ public class Promise<R> {
     }, delayMillis));
   }
 
+  /**
+   * @param callback
+   * @param <A>
+   */
   public <A> Promise(final Callback2<? super A, ? extends R> callback) {
     this((arg, resolver) -> {
       try {
@@ -113,23 +161,55 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param error
+   * @param <N>
+   */
   public <N> Promise(final RuntimeException error) {
     this((arg, resolver) -> resolver.resolve(null, error));
   }
 
+  /**
+   * @param promise
+   * @param <R>
+   * @return
+   */
+  @Contract(value = "_ -> param1", pure = true)
   public static <R> Promise<R> resolve(Promise<R> promise) {
     return promise;
   }
 
+  /**
+   * @param result
+   * @param <R>
+   * @return
+   */
+  @NonNull
+  @Contract("_ -> new")
   public static <R> Promise<R> resolve(final R result) {
     return new Promise<>((arg, resolver) -> resolve(result));
   }
 
-  public static <A, R> Promise<R> resolve(final RuntimeException ex) {
+  /**
+   * @param ex
+   * @param <A>
+   * @param <R>
+   * @return
+   */
+  public static <A, R> Promise<R> resolve(final Throwable ex) {
     return new Promise<>((CallbackWithResolver<A, R>)
         (arg, resolver) -> resolver.resolve(null, ex));
   }
 
+  /**
+   * @param promises
+   * @param <A>
+   * @param <R>
+   * @return
+   */
+  @NonNull
+  @Contract("_ -> new")
+  @SafeVarargs
   public static <A, R> Promise<List<R>> all(final Promise<R>... promises) {
     return new Promise<>((CallbackWithResolver<A, List<R>>) (arg, resolver) -> {
       final AtomicInteger totalCount = new AtomicInteger(promises.length);
@@ -146,6 +226,14 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param promises
+   * @param <A>
+   * @param <R>
+   * @return
+   */
+  @NonNull
+  @Contract("_ -> new")
   public static <A, R> Promise<List<R>> all(final List<? extends Promise<R>> promises) {
     return new Promise<>((CallbackWithResolver<A, List<R>>) (arg, resolver) -> {
       final AtomicInteger totalCount = new AtomicInteger(promises.size());
@@ -162,6 +250,12 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param promises
+   * @param <A>
+   * @param <R>
+   * @return
+   */
   public static <A, R> Promise<R> race(final List<? extends Promise<R>> promises) {
     return new Promise<>((CallbackWithResolver<A, R>) (arg, resolver) -> {
       final AtomicInteger totalCount = new AtomicInteger(promises.size());
@@ -182,7 +276,7 @@ public class Promise<R> {
     return result;
   }
 
-  public RuntimeException getError() {
+  public Throwable getError() {
     return error;
   }
 
@@ -190,17 +284,33 @@ public class Promise<R> {
     return error == null;
   }
 
+  /**
+   * @param resolver
+   */
   public void pipe(Resolver<R> resolver) {
     if (this.state == State.Pending) this.handlers.add(resolver);
     else resolver.resolve(result, error);
   }
 
-  private <A, R> Promise<R> __pipe(final Promise<A> self, final Piper<? super A, R> piper) {
+  /**
+   * @param self
+   * @param piper
+   * @param <A>
+   * @param <R>
+   * @return
+   */
+  private <A, R> Promise<R> __pipe(final Promise<A> self,
+                                   final Piper<? super A, R> piper) {
     return new Promise<>((CallbackWithResolver<A, R>) (arg, resolver) ->
         self.pipe((result, error) ->
             piper.pipe(result, error, resolver)));
   }
 
+  /**
+   * @param then
+   * @param <N>
+   * @return
+   */
   public <N> Promise<N> then(final Callback2<? super R, ? extends N> then) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -214,6 +324,9 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param then
+   */
   public void then(final VoidReturnCallback<? super R> then) {
     __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -228,6 +341,9 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param then
+   */
   public void then(final VoidArgVoidReturnCallback then) {
     __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -242,6 +358,11 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param then
+   * @param <N>
+   * @return
+   */
   public <N> Promise<N> then(final VoidArgCallback<? extends N> then) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -255,6 +376,11 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param then
+   * @param <N>
+   * @return
+   */
   public <N> Promise<N> then(final CallbackWithResolver<? super R, N> then) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -268,6 +394,12 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param delayMillis
+   * @param then
+   * @param <N>
+   * @return
+   */
   public <N> Promise<N> thenDelay(final long delayMillis, final Callback2<? super R, ? extends N> then) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -281,6 +413,12 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param delayMillis
+   * @param then
+   * @param <N>
+   * @return
+   */
   public <N> Promise<N> thenDelay(final long delayMillis, final VoidArgCallback<? extends N> then) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -294,6 +432,10 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param delayMillis
+   * @param then
+   */
   public void thenDelay(final long delayMillis, final VoidReturnCallback<? super R> then) {
     __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -308,6 +450,10 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param delayMillis
+   * @param then
+   */
   public void thenDelay(final long delayMillis, final VoidArgVoidReturnCallback then) {
     __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -322,6 +468,12 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param delayMillis
+   * @param then
+   * @param <N>
+   * @return
+   */
   public <N> Promise<N> thenDelay(final long delayMillis, final CallbackWithResolver<? super R, N> then) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) resolver.resolve(null, error);
@@ -335,7 +487,11 @@ public class Promise<R> {
     });
   }
 
-  public Promise<R> error(final Callback2<RuntimeException, ? extends R> callback) {
+  /**
+   * @param callback
+   * @return
+   */
+  public Promise<R> error(final Callback2<Throwable, ? extends R> callback) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) instance.execute(() -> {
         try {
@@ -350,6 +506,10 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param callback
+   * @return
+   */
   public Promise<R> error(final VoidArgCallback<? extends R> callback) {
     return __pipe(this, (arg, error, resolver) -> {
       if (error != null) instance.execute(() -> {
@@ -363,7 +523,10 @@ public class Promise<R> {
     });
   }
 
-  public void error(final VoidReturnCallback<RuntimeException> callback) {
+  /**
+   * @param callback
+   */
+  public void error(final VoidReturnCallback<Throwable> callback) {
     __pipe(this, (arg, error, resolver) -> {
       if (error != null) instance.execute(() -> {
         try {
@@ -377,6 +540,9 @@ public class Promise<R> {
     });
   }
 
+  /**
+   * @param callback
+   */
   public void error(final VoidArgVoidReturnCallback callback) {
     __pipe(this, (arg, error, resolver) -> {
       if (error != null) instance.execute(() -> {
@@ -391,13 +557,36 @@ public class Promise<R> {
     });
   }
 
+  /**
+   *
+   */
   public enum State {
+
+    /**
+     *
+     */
     Pending,
+    /**
+     *
+     */
     Fulfilled,
+    /**
+     *
+     */
     Rejected
   }
 
+  /**
+   * @param <A>
+   * @param <R>
+   */
   public interface Piper<A, R> {
-    void pipe(A arg, RuntimeException error, Resolver<? super R> resolver);
+
+    /**
+     * @param arg
+     * @param error
+     * @param resolver
+     */
+    void pipe(A arg, Throwable error, Resolver<? super R> resolver);
   }
 }
