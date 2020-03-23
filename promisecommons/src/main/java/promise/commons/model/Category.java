@@ -18,28 +18,28 @@ package promise.commons.model;
  */
 
 public class Category<K, T> {
-    private List<? extends T> list;
-    private K name;
+  private List<? extends T> list;
+  private K name;
 
-    Category(K name) {
-        this.name = name;
-    }
+  Category(K name) {
+    this.name = name;
+  }
 
-    public List<? extends T> list() {
-        return list;
-    }
+  public List<? extends T> list() {
+    return list;
+  }
 
-    public Category<K, T> list(List<? extends T> list) {
-        this.list = list;
-        return this;
-    }
+  public Category<K, T> list(List<? extends T> list) {
+    this.list = list;
+    return this;
+  }
 
-    public K name() {
-        return name;
-    }
+  public K name() {
+    return name;
+  }
 
-    public Category<K, T> name(K name) {
-        this.name = name;
-        return this;
-    }
+  public Category<K, T> name(K name) {
+    this.name = name;
+    return this;
+  }
 }

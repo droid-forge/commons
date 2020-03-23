@@ -15,5 +15,5 @@ package promise.commons.tx;
 
 
 public interface VoidArgVoidReturnCallback {
-    void call();
+  void call();
 }

@@ -17,5 +17,5 @@ package promise.commons.model.function;
  * Created on 6/10/18 by yoctopus.
  */
 public interface JoinFunction<T, U> {
-    boolean joinBy(T t, U u);
+  boolean joinBy(T t, U u);
 }

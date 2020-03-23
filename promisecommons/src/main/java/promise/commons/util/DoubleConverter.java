@@ -21,17 +21,17 @@ package promise.commons.util;
  * @param <X> type returned after serializing the instance
  */
 public interface DoubleConverter<T, E, X> {
-    /*
-     * deserialize back the instance from the serializes form
-     * @param e serialized form
-     * @return back the instance
-     */
-    T deserialize(E e);
+  /*
+   * deserialize back the instance from the serializes form
+   * @param e serialized form
+   * @return back the instance
+   */
+  T deserialize(E e);
 
-    /*
-     *  serializes the instance to another form
-     * @param t the instance to be serialized
-     * @return the serialized form of t
-     */
-    X serialize(T t);
+  /*
+   *  serializes the instance to another form
+   * @param t the instance to be serialized
+   * @return the serialized form of t
+   */
+  X serialize(T t);
 }

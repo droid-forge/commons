@@ -28,14 +28,14 @@ import static promise.commons.util.Conditions.checkNotNull;
  */
 public class LogcatLogStrategy implements LogStrategy {
 
-    static final String DEFAULT_TAG = "Promise_App_TAG";
+  static final String DEFAULT_TAG = "Promise_App_TAG";
 
-    @Override
-    public void log(int priority, @Nullable String tag, @NonNull String message) {
-        checkNotNull(message);
+  @Override
+  public void log(int priority, @Nullable String tag, @NonNull String message) {
+    checkNotNull(message);
 
-        if (tag == null) tag = DEFAULT_TAG;
+    if (tag == null) tag = DEFAULT_TAG;
 
-        if (LogUtil.promise.enableDebug)  Log.println(priority, tag, message);
-    }
+    if (LogUtil.promise.enableDebug) Log.println(priority, tag, message);
+  }
 }

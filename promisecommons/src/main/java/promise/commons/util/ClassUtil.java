@@ -23,54 +23,54 @@ import java.lang.reflect.Field;
 
 public class ClassUtil {
 
-    public static int getIntFieldIfExists(Class<?> klass,
-                                          String fieldName,
-                                          Class<?> obj,
-                                          int defaultVal) {
-        try {
-            Field f = klass.getDeclaredField(fieldName);
-            return f.getInt(obj);
-        } catch (Exception e) {
-            return defaultVal;
-        }
+  public static int getIntFieldIfExists(Class<?> klass,
+                                        String fieldName,
+                                        Class<?> obj,
+                                        int defaultVal) {
+    try {
+      Field f = klass.getDeclaredField(fieldName);
+      return f.getInt(obj);
+    } catch (Exception e) {
+      return defaultVal;
     }
+  }
 
    /* public static Map<String, Class<?>> getFields(Class<?> klass, Class<?> object){
         List<Field> fields = new List<>(klass.getDeclaredFields());
     }*/
 
-    public static boolean hasField(Class<?> klass,
-                                   String fieldName) {
-        try {
-            klass.getDeclaredField(fieldName);
-            return true;
-        } catch (NoSuchFieldException e) {
-            return false;
-        }
+  public static boolean hasField(Class<?> klass,
+                                 String fieldName) {
+    try {
+      klass.getDeclaredField(fieldName);
+      return true;
+    } catch (NoSuchFieldException e) {
+      return false;
     }
+  }
 
-    public static boolean hasMethod(String className,
-                                    String methodName,
-                                    Class<?>... parameterTypes) {
-        try {
-            return hasMethod(Class.forName(className), methodName, parameterTypes);
-        } catch (Throwable th) {
-            return false;
-        }
+  public static boolean hasMethod(String className,
+                                  String methodName,
+                                  Class<?>... parameterTypes) {
+    try {
+      return hasMethod(Class.forName(className), methodName, parameterTypes);
+    } catch (Throwable th) {
+      return false;
     }
+  }
 
-    public static boolean hasMethod(Class<?> klass,
-                                    String methodName,
-                                    Class<?>... paramTypes) {
-        try {
-            klass.getDeclaredMethod(methodName, paramTypes);
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
+  public static boolean hasMethod(Class<?> klass,
+                                  String methodName,
+                                  Class<?>... paramTypes) {
+    try {
+      klass.getDeclaredMethod(methodName, paramTypes);
+      return true;
+    } catch (NoSuchMethodException e) {
+      return false;
     }
+  }
 
-    public static boolean hasAnnotation(Class<?> klass, Class<? extends Annotation> annotation) {
-        return klass.isAnnotationPresent(annotation);
-    }
+  public static boolean hasAnnotation(Class<?> klass, Class<? extends Annotation> annotation) {
+    return klass.isAnnotationPresent(annotation);
+  }
 }

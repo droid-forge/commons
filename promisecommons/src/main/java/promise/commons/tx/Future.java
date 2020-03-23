@@ -17,18 +17,18 @@ package promise.commons.tx;
  *
  */
 interface Future {
-    /**
-     *
-     */
-    void cancel();
+  /**
+   *
+   */
+  void cancel();
 
-    /**
-     * @return
-     */
-    boolean isCancelled();
+  /**
+   * @return
+   */
+  boolean isCancelled();
 
-    /**
-     * @return
-     */
-    boolean isDone();
+  /**
+   * @return
+   */
+  boolean isDone();
 }

@@ -13,15 +13,15 @@
 
 package promise.commonsapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import promise.commons.AndroidPromise
 import promise.commons.model.Message
 import promise.commons.tx.PromiseResult
 
 class MessageActivity : AppCompatActivity() {
 
-   var notificationListenId: Int = 0
+  var notificationListenId: Int = 0
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_message)

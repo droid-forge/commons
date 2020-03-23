@@ -22,33 +22,33 @@ import promise.commons.AndroidPromise;
  * {@link Transaction}
  */
 public abstract class TimedTransaction<RETURN, PROGRESS, ARGUMENT> extends Transaction<RETURN, PROGRESS, ARGUMENT> {
-    /**
-     * should not be called on this instance since the execution must be scheduled for the future
-     *
-     * @param params given arguments
-     */
-    @Override
-    public void execute(@Nullable ARGUMENT[] params) {
-        throw new RuntimeException("This method stub is not allowed on TimedTX");
-    }
+  /**
+   * should not be called on this instance since the execution must be scheduled for the future
+   *
+   * @param params given arguments
+   */
+  @Override
+  public void execute(@Nullable ARGUMENT[] params) {
+    throw new RuntimeException("This method stub is not allowed on TimedTX");
+  }
 
-    /**
-     * execution will always happen on a background thread no matter which thread invokes it
-     *
-     * @param params execution arguments
-     * @param millis wait time interval between each execution
-     */
-    @Override
-    public void execute(@Nullable ARGUMENT[] params, long millis) {
-        if (millis < 1)
-            throw new IllegalArgumentException("wait millis time must be more than zero");
-        AndroidPromise.instance().execute(() -> {
-            try {
-                Thread.sleep(millis);
-                super.execute(params);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+  /**
+   * execution will always happen on a background thread no matter which thread invokes it
+   *
+   * @param params execution arguments
+   * @param millis wait time interval between each execution
+   */
+  @Override
+  public void execute(@Nullable ARGUMENT[] params, long millis) {
+    if (millis < 1)
+      throw new IllegalArgumentException("wait millis time must be more than zero");
+    AndroidPromise.instance().execute(() -> {
+      try {
+        Thread.sleep(millis);
+        super.execute(params);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    });
+  }
 }

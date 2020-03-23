@@ -17,5 +17,5 @@ package promise.commons.model.function;
  * Created on 6/10/18 by yoctopus.
  */
 public interface GroupFunction<K, T> {
-    K getKey(T t);
+  K getKey(T t);
 }

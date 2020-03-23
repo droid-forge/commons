@@ -15,7 +15,6 @@ package promise.commons.tx
 
 import promise.commons.AndroidPromise
 import promise.commons.data.log.LogUtil
-import java.lang.Exception
 
 /**
  *

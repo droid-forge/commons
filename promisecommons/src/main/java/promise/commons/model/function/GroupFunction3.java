@@ -19,5 +19,5 @@ import promise.commons.model.List;
  * Created on 6/10/18 by yoctopus.
  */
 public interface GroupFunction3<E, T> {
-    List<E> group(List<T> list);
+  List<E> group(List<T> list);
 }

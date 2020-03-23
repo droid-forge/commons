@@ -15,6 +15,7 @@ package promise.commons.data.log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import promise.commons.util.Conditions;
 
 /**
@@ -32,25 +33,25 @@ import promise.commons.util.Conditions;
  */
 public class CommonLogAdapter implements LogAdapter {
 
-    @NonNull
-    private final FormatStrategy formatStrategy;
+  @NonNull
+  private final FormatStrategy formatStrategy;
 
-    public CommonLogAdapter() {
-        this.formatStrategy = PromiseFormatStrategy.newBuilder().build();
-    }
+  public CommonLogAdapter() {
+    this.formatStrategy = PromiseFormatStrategy.newBuilder().build();
+  }
 
-    public CommonLogAdapter(@NonNull FormatStrategy formatStrategy) {
-        this.formatStrategy = Conditions.checkNotNull(formatStrategy);
-    }
+  public CommonLogAdapter(@NonNull FormatStrategy formatStrategy) {
+    this.formatStrategy = Conditions.checkNotNull(formatStrategy);
+  }
 
-    @Override
-    public boolean isLoggable(int priority, @Nullable String tag) {
-        return true;
-    }
+  @Override
+  public boolean isLoggable(int priority, @Nullable String tag) {
+    return true;
+  }
 
-    @Override
-    public void log(int priority, @Nullable String tag, @NonNull String message) {
-        formatStrategy.log(priority, tag, message);
-    }
+  @Override
+  public void log(int priority, @Nullable String tag, @NonNull String message) {
+    formatStrategy.log(priority, tag, message);
+  }
 
 }

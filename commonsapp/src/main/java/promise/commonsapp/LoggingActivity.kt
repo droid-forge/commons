@@ -13,8 +13,8 @@
 
 package promise.commonsapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import promise.commons.data.log.CommonLogAdapter
 import promise.commons.data.log.DiskLogAdapter
 import promise.commons.data.log.LogUtil

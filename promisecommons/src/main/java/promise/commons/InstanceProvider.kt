@@ -20,8 +20,8 @@ package promise.commons
  */
 interface InstanceProvider<out T> {
 
-    /**
-     * Provides a fully-constructed and injected instance of `T`.
-     */
-    fun get(): T
+  /**
+   * Provides a fully-constructed and injected instance of `T`.
+   */
+  fun get(): T
 }

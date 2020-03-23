@@ -19,17 +19,17 @@ package promise.commons.model
  * @param T type of identifying id
  */
 interface Identifiable<T> {
-    /**
-     * set the id to the instance
-     *
-     * @param t id
-     */
-    fun setId(t: T)
+  /**
+   * set the id to the instance
+   *
+   * @param t id
+   */
+  fun setId(t: T)
 
-    /**
-     * get the id from the instance
-     *
-     * @return
-     */
-    fun getId(): T
+  /**
+   * get the id from the instance
+   *
+   * @return
+   */
+  fun getId(): T
 }

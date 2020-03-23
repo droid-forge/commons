@@ -18,28 +18,28 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 
 public class Message implements Serializable {
-    private String sender;
-    private Object message;
+  private String sender;
+  private Object message;
 
-    public Message(String sender, Object message) {
-        this.sender = sender;
-        this.message = message;
-    }
+  public Message(String sender, Object message) {
+    this.sender = sender;
+    this.message = message;
+  }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return "Message{" +
-                "sender='" + sender + '\'' +
-                ", message=" + message +
-                '}';
-    }
+  @NonNull
+  @Override
+  public String toString() {
+    return "Message{" +
+        "sender='" + sender + '\'' +
+        ", message=" + message +
+        '}';
+  }
 
-    public String sender() {
-        return sender;
-    }
+  public String sender() {
+    return sender;
+  }
 
-    public Object message() {
-        return message;
-    }
+  public Object message() {
+    return message;
+  }
 }

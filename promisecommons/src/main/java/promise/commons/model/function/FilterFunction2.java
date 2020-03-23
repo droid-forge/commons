@@ -17,7 +17,7 @@ package promise.commons.model.function;
  * Created on 6/10/18 by yoctopus.
  */
 public interface FilterFunction2<K, T, U> {
-    K filterBy(U u);
+  K filterBy(U u);
 
-    K getKey(T t);
+  K getKey(T t);
 }

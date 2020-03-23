@@ -13,7 +13,6 @@
 
 package promise.commons.file;
 
-import android.content.Context;
 import android.os.Environment;
 
 import java.io.BufferedInputStream;
@@ -29,119 +28,119 @@ import promise.commons.data.log.LogUtil;
 
 public class Dir {
 
-    private static String TAG = LogUtil.makeTag(Dir.class);
+  private static String TAG = LogUtil.makeTag(Dir.class);
 
-    private String name;
+  private String name;
 
-    public Dir(String name) {
-        map(name);
+  public Dir(String name) {
+    map(name);
+  }
+
+  public static String getState() {
+    return Environment.getExternalStorageState();
+  }
+
+  public static boolean isWritable() {
+    return Environment.MEDIA_MOUNTED.equals(getState());
+  }
+
+  public static boolean make(String path) {
+    File file = new File(path);
+    if (!file.exists()) return file.mkdirs();
+    return true;
+  }
+
+  public static void clearAppData() {
+    try {
+      String packageName = AndroidPromise.instance().getApplication().getPackageName();
+      Runtime runtime = Runtime.getRuntime();
+      runtime.exec("pm clear " + packageName);
+
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    public static String getState() {
-        return Environment.getExternalStorageState();
+  public static File getFile(String path, String fileName) {
+    return new File(path + File.separator + fileName);
+  }
+
+  public static void move(String inputPath, String inputFile, String outputPath) {
+    copy(inputPath, inputFile, outputPath);
+    delete(inputPath, inputFile);
+  }
+
+  public static void delete(String inputPath, String inputFile) {
+    try {
+      new File(inputPath + File.separator + inputFile).delete();
+    } catch (Exception e) {
+      LogUtil.e(TAG, e.getMessage());
     }
+  }
 
-    public static boolean isWritable() {
-        return Environment.MEDIA_MOUNTED.equals(getState());
+  public static void copy(String inputPath, String inputFile, String outputPath) {
+    InputStream in;
+    OutputStream out;
+    try {
+      LogUtil.e(TAG, "origin", inputPath + File.separator + inputFile);
+      in = new FileInputStream(inputPath + File.separator + inputFile);
+      out = new FileOutputStream(new Dir(outputPath).getName() + File.separator + inputFile);
+      byte[] buffer = new byte[1024];
+      int read;
+      while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);
+      in.close();
+      // write the output file
+      out.flush();
+      out.close();
+      LogUtil.e(TAG, "destination", outputPath + File.separator + inputFile);
+    } catch (FileNotFoundException fnfe1) {
+      LogUtil.e(TAG, fnfe1.getMessage());
+    } catch (Exception e) {
+      LogUtil.e(TAG, e.getMessage());
     }
+  }
 
-    public static boolean make(String path) {
-        File file = new File(path);
-        if (!file.exists()) return file.mkdirs();
-        return true;
+  public static File save(InputStream in, File file) {
+    try {
+      BufferedInputStream input = new BufferedInputStream(in);
+      OutputStream output = new FileOutputStream(file);
+
+      byte[] data = new byte[1024];
+
+      long total = 0;
+      int count;
+
+      while ((count = input.read(data)) != -1) {
+        total += count;
+        output.write(data, 0, count);
+      }
+
+      output.flush();
+      output.close();
+      input.close();
+    } catch (Exception e) {
+      LogUtil.e(TAG, e.getMessage());
     }
+    return file;
+  }
 
-    public static void clearAppData() {
-        try {
-            String packageName = AndroidPromise.instance().getApplication().getPackageName();
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec("pm clear " + packageName);
+  public String getName() {
+    return name;
+  }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+  private void setName(String name) {
+    this.name = name;
+  }
+
+  public void map(String... dirs) {
+    String path = Environment.getExternalStorageDirectory().toString();
+    for (String dir : dirs) {
+      setName(path + File.separator + dir);
+      if (make(getName())) setName(getName());
     }
+  }
 
-    public static File getFile(String path, String fileName) {
-        return new File(path + File.separator + fileName);
-    }
-
-    public static void move(String inputPath, String inputFile, String outputPath) {
-        copy(inputPath, inputFile, outputPath);
-        delete(inputPath, inputFile);
-    }
-
-    public static void delete(String inputPath, String inputFile) {
-        try {
-            new File(inputPath + File.separator + inputFile).delete();
-        } catch (Exception e) {
-            LogUtil.e(TAG, e.getMessage());
-        }
-    }
-
-    public static void copy(String inputPath, String inputFile, String outputPath) {
-        InputStream in;
-        OutputStream out;
-        try {
-            LogUtil.e(TAG, "origin", inputPath + File.separator + inputFile);
-            in = new FileInputStream(inputPath + File.separator + inputFile);
-            out = new FileOutputStream(new Dir(outputPath).getName() + File.separator + inputFile);
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);
-            in.close();
-            // write the output file
-            out.flush();
-            out.close();
-            LogUtil.e(TAG, "destination", outputPath + File.separator + inputFile);
-        } catch (FileNotFoundException fnfe1) {
-            LogUtil.e(TAG, fnfe1.getMessage());
-        } catch (Exception e) {
-            LogUtil.e(TAG, e.getMessage());
-        }
-    }
-
-    public static File save(InputStream in, File file) {
-        try {
-            BufferedInputStream input = new BufferedInputStream(in);
-            OutputStream output = new FileOutputStream(file);
-
-            byte[] data = new byte[1024];
-
-            long total = 0;
-            int count;
-
-            while ((count = input.read(data)) != -1) {
-                total += count;
-                output.write(data, 0, count);
-            }
-
-            output.flush();
-            output.close();
-            input.close();
-        } catch (Exception e) {
-            LogUtil.e(TAG, e.getMessage());
-        }
-        return file;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    private void setName(String name) {
-        this.name = name;
-    }
-
-    public void map(String... dirs) {
-        String path = Environment.getExternalStorageDirectory().toString();
-        for (String dir : dirs) {
-            setName(path + File.separator + dir);
-            if (make(getName())) setName(getName());
-        }
-    }
-
-    public String path(String name) {
-        return getName() + File.separator + name;
-    }
+  public String path(String name) {
+    return getName() + File.separator + name;
+  }
 }

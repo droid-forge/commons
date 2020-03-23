@@ -19,15 +19,15 @@ import promise.commons.data.log.LogUtil;
  * Created by octopus on 10/16/16.
  */
 class NoCallBacksError extends Exception {
-    private NoCallBacksError(String message) {
-        super(message);
-    }
+  private NoCallBacksError(String message) {
+    super(message);
+  }
 
-    NoCallBacksError() {
-        this("No callbacks Defined, exiting task");
-    }
+  NoCallBacksError() {
+    this("No callbacks Defined, exiting task");
+  }
 
-    void show() {
-        LogUtil.e("_NoCallBacksError", getMessage());
-    }
+  void show() {
+    LogUtil.e("_NoCallBacksError", getMessage());
+  }
 }

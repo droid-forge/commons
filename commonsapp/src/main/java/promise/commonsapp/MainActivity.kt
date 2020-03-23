@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
-import promise.commons.AndroidPromise
 import promise.commons.data.log.CommonLogAdapter
 import promise.commons.data.log.LogUtil
 import promise.commons.makeInstance
@@ -33,7 +32,7 @@ interface FakeStringsRepo {
   fun getStrings(): Either<Array<String>, Throwable>
 }
 
-class FakeRepositoryImpl: FakeStringsRepo {
+class FakeRepositoryImpl : FakeStringsRepo {
   override fun getStrings(): Either<Array<String>, Throwable> =
       AsyncRight { resolve ->
         resolve(arrayOf("somekey", "somekey1",

@@ -22,95 +22,95 @@ import promise.commons.data.log.LogUtil;
  * @param <E> error type
  */
 public class PromiseResult<T, E extends Throwable> {
-    private final String TAG = LogUtil.makeTag(PromiseResult.class);
-    /**
-     * response callback
-     *
-     * @see Response
-     */
-    private Response<? super T, ? extends E> response;
-    /**
-     * error callback
-     *
-     * @see Error
-     */
-    private Error<? super E> error;
+  private final String TAG = LogUtil.makeTag(PromiseResult.class);
+  /**
+   * response callback
+   *
+   * @see Response
+   */
+  private Response<? super T, ? extends E> response;
+  /**
+   * error callback
+   *
+   * @see Error
+   */
+  private Error<? super E> error;
 
-    /**
-     * register response callback
-     *
-     * @param response callback for response
-     * @return result with response callback
-     */
-    public PromiseResult<T, E> withCallback(Response<? super T, ? extends E> response) {
-        this.response = response;
-        return this;
-    }
+  /**
+   * register response callback
+   *
+   * @param response callback for response
+   * @return result with response callback
+   */
+  public PromiseResult<T, E> withCallback(Response<? super T, ? extends E> response) {
+    this.response = response;
+    return this;
+  }
 
-    public PromiseResult<T, E> withUICallback(Response<? super T, ? extends E> response,
-                                              Error<? super E> error) {
-        this.response = new UIResponse<T, E>(response, error);
-        return this;
-    }
+  public PromiseResult<T, E> withUICallback(Response<? super T, ? extends E> response,
+                                            Error<? super E> error) {
+    this.response = new UIResponse<T, E>(response, error);
+    return this;
+  }
 
-    /**
-     * register error callback
-     *
-     * @param error callback for error
-     * @return result with error callback
-     */
-    public PromiseResult<T, E> withErrorCallback(Error<? super E> error) {
-        this.error = error;
-        return this;
-    }
+  /**
+   * register error callback
+   *
+   * @param error callback for error
+   * @return result with error callback
+   */
+  public PromiseResult<T, E> withErrorCallback(Error<? super E> error) {
+    this.error = error;
+    return this;
+  }
 
-    /**
-     * return the response back to the caller via the response callback
-     *
-     * @param t   response
-     * @param <R> type of response
-     */
-    public <R extends T> void response(R t) {
-        if (response != null) try {
-            response.onResponse(t);
-        } catch (Throwable e) {
-            LogUtil.e(TAG, e);
-            error((E) e);
-        }
-        else LogUtil.e(TAG,
-                new IllegalStateException("Could not pass data: " + t +
-                    " , response not provided"));
+  /**
+   * return the response back to the caller via the response callback
+   *
+   * @param t   response
+   * @param <R> type of response
+   */
+  public <R extends T> void response(R t) {
+    if (response != null) try {
+      response.onResponse(t);
+    } catch (Throwable e) {
+      LogUtil.e(TAG, e);
+      error((E) e);
     }
+    else LogUtil.e(TAG,
+        new IllegalStateException("Could not pass data: " + t +
+            " , response not provided"));
+  }
 
-    /**
-     * return the error back to the caller
-     *
-     * @param e   error response
-     * @param <R> type of error response
-     */
-    public <R extends E> void error(R e) {
-        if (error != null) error.onError(e);
-        else LogUtil.e(TAG,
-                new IllegalStateException("Could not process error: " + e +
-                    " , error not provided"));
-    }
+  /**
+   * return the error back to the caller
+   *
+   * @param e   error response
+   * @param <R> type of error response
+   */
+  public <R extends E> void error(R e) {
+    if (error != null) error.onError(e);
+    else LogUtil.e(TAG,
+        new IllegalStateException("Could not process error: " + e +
+            " , error not provided"));
+  }
 
-    /**
-     * response callback
-     *
-     * @param <T> type of response
-     * @param <E> type of error
-     */
-    public interface Response<T, E extends Throwable> {
-        void onResponse(T t) throws E;
-    }
+  /**
+   * response callback
+   *
+   * @param <T> type of response
+   * @param <E> type of error
+   */
+  public interface Response<T, E extends Throwable> {
+    void onResponse(T t) throws E;
+  }
 
-    /**
-     * error callback
-     *
-     * @param <E> type of error
-     */
-    public interface Error<E> {
-        void onError(E e);
-    }
+  /**
+   * error callback
+   *
+   * @param <E> type of error
+   */
+  public interface Error<E> {
+    void onError(E e);
+  }
 }

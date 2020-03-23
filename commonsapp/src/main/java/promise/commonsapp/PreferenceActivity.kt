@@ -13,8 +13,8 @@
 
 package promise.commonsapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import promise.commons.pref.Preferences
 
 class CustomType {
@@ -30,8 +30,8 @@ class PreferenceActivity : AppCompatActivity() {
     setContentView(R.layout.activity_preference)
     preferences = Preferences()
     // normal save ops
-    preferences.save("key","value")
-    preferences.save("key1",45)
+    preferences.save("key", "value")
+    preferences.save("key1", 45)
     preferences.save("customType", CustomType().apply { arg = 67 })
 
     // retrieve values

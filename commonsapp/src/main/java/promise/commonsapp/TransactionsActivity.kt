@@ -18,7 +18,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
-import promise.commons.model.List
 import promise.commons.tx.Transaction
 import promise.commons.tx.Transaction.CallBackExecutor
 import promise.commons.tx.TransactionManager
@@ -74,7 +73,7 @@ class TransactionsActivity : AppCompatActivity() {
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-      // assume the background work needs two args to do their task
+    // assume the background work needs two args to do their task
     TransactionManager.instance().execute(transaction.complete {
       preferences_textview.text = it.reverse().toString()
     }, Pair(arrayOf("arg1", "arg2"), 1000))

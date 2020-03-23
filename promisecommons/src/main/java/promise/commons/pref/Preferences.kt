@@ -20,7 +20,6 @@ import com.google.gson.JsonSyntaxException
 import promise.commons.AndroidPromise
 import promise.commons.Utils
 import promise.commons.data.log.LogUtil
-import kotlin.collections.ArrayList
 
 /**
  *
@@ -144,7 +143,7 @@ class Preferences {
    * @return
    */
   fun save(key: String, param: Boolean): Boolean = try {
-    savePreference( Pref(key, param))
+    savePreference(Pref(key, param))
     true
   } catch (invalidPref: InvalidPref) {
     LogUtil.e(TAG, invalidPref)
@@ -336,18 +335,22 @@ class Preferences {
      *
      */
     private var EMPTY_STRING = ""
+
     /**
      *
      */
     private var EMPTY_BOOLEAN = false
+
     /**
      *
      */
     private var EMPTY_LONG: Long = 0
+
     /**
      *
      */
     private var EMPTY_INT = 0
+
     /**
      *
      */
@@ -414,18 +417,22 @@ class Preferences {
    *
    */
   private var EMPTY_STRING: String = ""
+
   /**
    *
    */
   private var EMPTY_BOOLEAN = false
+
   /**
    *
    */
   private var EMPTY_LONG: Long = 0
+
   /**
    *
    */
   private var EMPTY_INT = 0
+
   /**
    *
    */

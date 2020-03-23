@@ -17,11 +17,11 @@ package promise.commons.pref;
  *
  */
 class InvalidPref extends Exception {
-    /**
-     * @param preference
-     */
-    InvalidPref(Preferences.Pref preference) {
-        super("Invalid preference  name " + preference.getName() + " data " + preference.get());
-    }
+  /**
+   * @param preference
+   */
+  InvalidPref(Preferences.Pref preference) {
+    super("Invalid preference  name " + preference.getName() + " data " + preference.get());
+  }
 
 }
