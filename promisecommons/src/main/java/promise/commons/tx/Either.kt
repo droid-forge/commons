@@ -16,6 +16,8 @@ package promise.commons.tx
 import promise.commons.AndroidPromise
 import promise.commons.data.log.LogUtil
 
+data class Data<T : Any, E : Throwable>(val t: T?, val e: E)
+
 /**
  *
  */
@@ -31,7 +33,7 @@ interface Either<T : Any, E : Throwable> {
       /**
        *
        */
-      err: (e: E) -> Unit)
+      err: ((e: E) -> Unit)? = null)
 
   @Throws(Throwable::class)
   fun foldSync(): Pair<T?, E?>
@@ -96,13 +98,13 @@ sealed class SyncEither<T : Any, E : Throwable>(
       /**
        *
        */
-      err: (e: E) -> Unit) {
+      err: ((e: E) -> Unit)?) {
     if (t != null) try {
       res(t)
     } catch (e: Throwable) {
       LogUtil.e(TAG, e)
     } else if (e != null) try {
-      err(e)
+      err?.invoke(e)
     } catch (e: Throwable) {
       LogUtil.e(TAG, e)
     }
@@ -285,23 +287,15 @@ class Left<E : Throwable, T : Any>(
      *
      */
     e)
-/**
- *
- */
-typealias AsyncEitherFunc<T> = (resolve: (T?) -> Unit) -> Unit
 
 /**
  *
  */
-sealed class AsyncEither<T : Any, E : Throwable>(
+class AsyncEither<T : Any, E : Throwable>(
     /**
      *
      */
-    val t: AsyncEitherFunc<T>?,
-    /**
-     *
-     */
-    val e: AsyncEitherFunc<E>?) : Either<T, E> {
+    val t: (resolve: (T?) -> Unit, reject: (E?) -> Unit) -> Unit) : Either<T, E> {
 
 
   /**
@@ -315,25 +309,21 @@ sealed class AsyncEither<T : Any, E : Throwable>(
       /**
        *
        */
-      err: (e: E) -> Unit) = promise.execute {
-    if (t != null) try {
-      t.invoke { result ->
+      err: ((e: E) -> Unit)?) = promise.execute {
+    try {
+      t({ result ->
         if (result != null) try {
           res(result)
         } catch (e: Throwable) {
-          err(e as E)
+          err?.invoke(e as E)
         }
-      }
-    } catch (e: Throwable) {
-      LogUtil.e(TAG, e)
-    } else if (e != null) try {
-      e.invoke { error ->
+      }, { error ->
         if (error != null) try {
-          err(error)
+          err?.invoke(error)
         } catch (e: Throwable) {
           LogUtil.e(TAG, e)
         }
-      }
+      })
     } catch (e: Throwable) {
       LogUtil.e(TAG, e)
     }
@@ -351,8 +341,8 @@ sealed class AsyncEither<T : Any, E : Throwable>(
        *
        */
       err: (e: E) -> Unit) = promise.execute {
-    if (t != null) try {
-      t.invoke { result ->
+    try {
+      t({ result ->
         if (result != null) try {
           promise.executeOnUi {
             res(result)
@@ -360,11 +350,7 @@ sealed class AsyncEither<T : Any, E : Throwable>(
         } catch (e: Throwable) {
           err(e as E)
         }
-      }
-    } catch (e: Throwable) {
-      LogUtil.e(TAG, e)
-    } else if (e != null) try {
-      e.invoke { error ->
+      }, { error ->
         if (error != null) try {
           promise.executeOnUi {
             err(error)
@@ -372,7 +358,7 @@ sealed class AsyncEither<T : Any, E : Throwable>(
         } catch (e: Throwable) {
           LogUtil.e(TAG, e)
         }
-      }
+      })
     } catch (e: Throwable) {
       LogUtil.e(TAG, e)
     }
@@ -388,24 +374,20 @@ sealed class AsyncEither<T : Any, E : Throwable>(
    */
   override fun fold(): PromiseCallback<T> = PromiseCallback { resolve, reject ->
     promise.execute {
-      if (t != null) try {
-        t.invoke { result ->
+      try {
+        t({ result ->
           if (result != null) try {
             resolve(result)
           } catch (e: Throwable) {
-            LogUtil.e(TAG, e)
+            reject(e as E)
           }
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        e.invoke { error ->
+        }, { error ->
           if (error != null) try {
             reject(error)
           } catch (e: Throwable) {
             LogUtil.e(TAG, e)
           }
-        }
+        })
       } catch (e: Throwable) {
         LogUtil.e(TAG, e)
       }
@@ -417,20 +399,16 @@ sealed class AsyncEither<T : Any, E : Throwable>(
    */
   override fun foldOnUI(): PromiseCallback<T> = PromiseCallback { resolve, reject ->
     promise.execute {
-      if (t != null) try {
-        t.invoke { result ->
+      try {
+        t({ result ->
           if (result != null) try {
-            promise.execute {
+            promise.executeOnUi {
               resolve(result)
             }
           } catch (e: Throwable) {
-            LogUtil.e(TAG, e)
+            reject(e as E)
           }
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        e.invoke { error ->
+        }, { error ->
           if (error != null) try {
             promise.executeOnUi {
               reject(error)
@@ -438,7 +416,7 @@ sealed class AsyncEither<T : Any, E : Throwable>(
           } catch (e: Throwable) {
             LogUtil.e(TAG, e)
           }
-        }
+        })
       } catch (e: Throwable) {
         LogUtil.e(TAG, e)
       }
@@ -454,24 +432,20 @@ sealed class AsyncEither<T : Any, E : Throwable>(
        */
       promiseResult: PromiseResult<T, E>) {
     promise.execute {
-      if (t != null) try {
-        t.invoke { result ->
+      try {
+        t({ result ->
           if (result != null) try {
             promiseResult.response(result)
           } catch (e: Throwable) {
-            LogUtil.e(TAG, e)
+            promiseResult.error(e as E)
           }
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        e.invoke { error ->
+        }, { error ->
           if (error != null) try {
             promiseResult.error(error)
           } catch (e: Throwable) {
             LogUtil.e(TAG, e)
           }
-        }
+        })
       } catch (e: Throwable) {
         LogUtil.e(TAG, e)
       }
@@ -480,20 +454,16 @@ sealed class AsyncEither<T : Any, E : Throwable>(
 
   override fun foldOnUI(promiseResult: PromiseResult<T, E>) {
     promise.execute {
-      if (t != null) try {
-        t.invoke { result ->
+      try {
+        t({ result ->
           if (result != null) try {
             promise.executeOnUi {
               promiseResult.response(result)
             }
           } catch (e: Throwable) {
-            LogUtil.e(TAG, e)
+            promiseResult.error(e as E)
           }
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        e.invoke { error ->
+        }, { error ->
           if (error != null) try {
             promise.executeOnUi {
               promiseResult.error(error)
@@ -501,7 +471,7 @@ sealed class AsyncEither<T : Any, E : Throwable>(
           } catch (e: Throwable) {
             LogUtil.e(TAG, e)
           }
-        }
+        })
       } catch (e: Throwable) {
         LogUtil.e(TAG, e)
       }
@@ -513,25 +483,20 @@ sealed class AsyncEither<T : Any, E : Throwable>(
    */
   override fun foldToPromise(): Promise<T?> = Promise(object : CallbackWithResolver<Any, T?> {
     override fun call(arg: Any, resolver: Resolver<T?>) {
-      if (t != null) try {
-        t.invoke { result ->
+      try {
+        t({ result ->
           if (result != null) try {
             resolver.resolve(result, null)
           } catch (e: Throwable) {
-            LogUtil.e(TAG, e)
+            resolver.resolve(null, e as E)
           }
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        e.invoke { error ->
+        }, { error ->
           if (error != null) try {
-            val exception = RuntimeException(error)
-            resolver.resolve(null, exception)
+            resolver.resolve(null, error)
           } catch (e: Throwable) {
             LogUtil.e(TAG, e)
           }
-        }
+        })
       } catch (e: Throwable) {
         LogUtil.e(TAG, e)
       }
@@ -540,20 +505,18 @@ sealed class AsyncEither<T : Any, E : Throwable>(
 
   override fun foldToPromiseOnUI(): Promise<T?> = Promise(object : CallbackWithResolver<Any, T?> {
     override fun call(arg: Any, resolver: Resolver<T?>) {
-      if (t != null) try {
-        t.invoke { result ->
+      try {
+        t({ result ->
           if (result != null) try {
             promise.executeOnUi {
               resolver.resolve(result, null)
             }
           } catch (e: Throwable) {
-            LogUtil.e(TAG, e)
+            promise.executeOnUi {
+              resolver.resolve(null, e as E)
+            }
           }
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        e.invoke { error ->
+        }, { error ->
           if (error != null) try {
             promise.executeOnUi {
               resolver.resolve(null, error)
@@ -561,7 +524,7 @@ sealed class AsyncEither<T : Any, E : Throwable>(
           } catch (e: Throwable) {
             LogUtil.e(TAG, e)
           }
-        }
+        })
       } catch (e: Throwable) {
         LogUtil.e(TAG, e)
       }
@@ -571,40 +534,7 @@ sealed class AsyncEither<T : Any, E : Throwable>(
   companion object {
     val TAG: String = LogUtil.makeTag(SyncEither::class.java)
     val promise: AndroidPromise = AndroidPromise.instance()
+
   }
 }
-
-/**
- *
- */
-class AsyncRight<T : Any, E : Throwable>(
-    /**
-     *
-     */
-    t: (resolve: (T?) -> Unit) -> Unit) : AsyncEither<T, E>(
-    /**
-     *
-     */
-    t,
-    /**
-     *
-     */
-    null)
-
-/**
- *
- */
-class AsyncLeft<E : Throwable, T : Any>(
-    /**
-     *
-     */
-    e: (resolve: (E?) -> Unit) -> Unit) : AsyncEither<T, E>(
-    /**
-     *
-     */
-    null,
-    /**
-     *
-     */
-    e)
 

@@ -22,7 +22,7 @@ import promise.commons.data.log.CommonLogAdapter
 import promise.commons.data.log.LogUtil
 import promise.commons.makeInstance
 import promise.commons.pref.Preferences
-import promise.commons.tx.AsyncRight
+import promise.commons.tx.AsyncEither
 import promise.commons.tx.Either
 import promise.commons.tx.Transaction
 import promise.commons.tx.Transaction.CallBackExecutor
@@ -33,12 +33,11 @@ interface FakeStringsRepo {
 }
 
 class FakeRepositoryImpl : FakeStringsRepo {
-  override fun getStrings(): Either<Array<String>, Throwable> =
-      AsyncRight { resolve ->
-        resolve(arrayOf("somekey", "somekey1",
-            "somekey2", "somekey3",
-            "somekey4", "somekey5"))
-      }
+  override fun getStrings(): Either<Array<String>, Throwable> = AsyncEither { resolve, _ ->
+    resolve(arrayOf("somekey", "somekey1",
+        "somekey2", "somekey3",
+        "somekey4", "somekey5"))
+  }
 }
 
 class MainActivity : AppCompatActivity() {
@@ -108,13 +107,20 @@ class MainActivity : AppCompatActivity() {
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     val fakeStringsRepo: FakeStringsRepo = FakeRepositoryImpl()
-    fakeStringsRepo.getStrings().fold()
+    fakeStringsRepo.getStrings()
+        .fold({
+          TransactionManager.instance().execute(transaction.complete {
+            preferences_textview.text = it.reverse().toString()
+          }, Pair(it, 1000))
+        })
+    /*fakeStringsRepo.getStrings().fold()
+
         .then { strings ->
           TransactionManager.instance().execute(transaction.complete {
             preferences_textview.text = it.reverse().toString()
           }, Pair(strings, 1000))
           strings
-        }.execute()
+        }.execute()*/
     title_textview.text = "Started reading"
     /* PromiseCallback<Array<String>> { resolve, _ ->
              resolve(arrayOf("somekey", "somekey1",
