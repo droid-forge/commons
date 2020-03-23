@@ -10,6 +10,9 @@ import promise.commons.data.log.CommonLogAdapter
 import promise.commons.data.log.LogUtil
 import promise.commons.makeInstance
 import promise.commons.pref.Preferences
+import promise.commons.tx.AsyncRight
+import promise.commons.tx.Either
+import promise.commons.tx.Right
 import promise.commons.tx.Transaction
 import promise.commons.tx.Transaction.CallBackExecutor
 import promise.commons.tx.TransactionManager
@@ -80,7 +83,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        PromiseCallback<Array<String>> { resolve, _ ->
+        AsyncRight<Array<String>, Throwable> {
+            arrayOf("somekey", "somekey1",
+                "somekey2", "somekey3",
+                "somekey4", "somekey5")
+        }.fold()
+            .then {
+                title_textview.text = "Started reading"
+                TransactionManager.instance().execute(transaction.complete {
+                    preferences_textview.text = it.reverse().toString()
+                }, Pair(it, 1000))
+                it
+            }.execute()
+       /* PromiseCallback<Array<String>> { resolve, _ ->
                 resolve(arrayOf("somekey", "somekey1",
                     "somekey2", "somekey3",
                     "somekey4", "somekey5"))
@@ -92,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             }, Pair(it, 1000))
             null
         }
-        .execute()
+        .execute()*/
     }
 
     override fun finish() {
