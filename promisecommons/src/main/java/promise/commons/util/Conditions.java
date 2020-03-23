@@ -15,10 +15,6 @@ package promise.commons.util;
 
 import androidx.annotation.Nullable;
 
-/**
- * Created by yoctopus on 11/25/16.
- */
-
 public final class Conditions {
 
   private Conditions() {
