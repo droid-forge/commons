@@ -97,16 +97,14 @@ sealed class SyncEither<T : Any, E : Throwable>(
        *
        */
       err: (e: E) -> Unit) {
-    promise.execute {
-      if (t != null) try {
-        res(t)
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        err(e)
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      }
+    if (t != null) try {
+      res(t)
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
+    } else if (e != null) try {
+      err(e)
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
     }
   }
 
@@ -129,20 +127,18 @@ sealed class SyncEither<T : Any, E : Throwable>(
        *
        */
       err: (e: E) -> Unit) {
-    promise.execute {
-      if (t != null) try {
-        promise.executeOnUi {
-          res(t)
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        promise.executeOnUi {
-          err(e)
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
+    if (t != null) try {
+      promise.executeOnUi {
+        res(t)
       }
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
+    } else if (e != null) try {
+      promise.executeOnUi {
+        err(e)
+      }
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
     }
   }
 
@@ -150,16 +146,14 @@ sealed class SyncEither<T : Any, E : Throwable>(
    *
    */
   override fun fold(): PromiseCallback<T> = PromiseCallback { resolve, reject ->
-    promise.execute {
-      if (t != null) try {
-        resolve(t)
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        reject(e)
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      }
+    if (t != null) try {
+      resolve(t)
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
+    } else if (e != null) try {
+      reject(e)
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
     }
   }
 
@@ -167,20 +161,18 @@ sealed class SyncEither<T : Any, E : Throwable>(
    *
    */
   override fun foldOnUI(): PromiseCallback<T> = PromiseCallback { resolve, reject ->
-    promise.execute {
-      if (t != null) try {
-        promise.executeOnUi {
-          resolve(t)
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        promise.executeOnUi {
-          reject(e)
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
+    if (t != null) try {
+      promise.executeOnUi {
+        resolve(t)
       }
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
+    } else if (e != null) try {
+      promise.executeOnUi {
+        reject(e)
+      }
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
     }
   }
 
@@ -192,34 +184,30 @@ sealed class SyncEither<T : Any, E : Throwable>(
        *
        */
       promiseResult: PromiseResult<T, E>) {
-    promise.execute {
-      if (t != null) try {
-        promiseResult.response(t)
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        promiseResult.error(e)
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      }
+    if (t != null) try {
+      promiseResult.response(t)
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
+    } else if (e != null) try {
+      promiseResult.error(e)
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
     }
   }
 
   override fun foldOnUI(promiseResult: PromiseResult<T, E>) {
-    promise.execute {
-      if (t != null) try {
-        promise.executeOnUi {
-          promiseResult.response(t)
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
-      } else if (e != null) try {
-        promise.executeOnUi {
-          promiseResult.error(e)
-        }
-      } catch (e: Throwable) {
-        LogUtil.e(TAG, e)
+    if (t != null) try {
+      promise.executeOnUi {
+        promiseResult.response(t)
       }
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
+    } else if (e != null) try {
+      promise.executeOnUi {
+        promiseResult.error(e)
+      }
+    } catch (e: Throwable) {
+      LogUtil.e(TAG, e)
     }
   }
 
