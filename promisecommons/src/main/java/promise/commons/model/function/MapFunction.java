@@ -13,9 +13,6 @@
 
 package promise.commons.model.function;
 
-/**
- * Created on 6/10/18 by yoctopus.
- */
 public interface MapFunction<E, T> {
   E from(T t);
 }

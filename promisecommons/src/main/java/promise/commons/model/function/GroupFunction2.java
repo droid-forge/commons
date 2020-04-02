@@ -15,9 +15,6 @@ package promise.commons.model.function;
 
 import promise.commons.model.List;
 
-/**
- * Created on 6/10/18 by yoctopus.
- */
 public interface GroupFunction2<K, E, T> {
   K getKey(T t);
 

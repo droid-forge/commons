@@ -30,11 +30,19 @@ import promise.commons.tx.Transaction.CallBackExecutor
 import promise.commons.tx.TransactionManager
 
 interface FakeStringsRepo {
-  fun getStrings(): Either<Array<String>, Throwable>
+  fun getStrings(): AsyncEither<Array<String>>
 }
 
 class FakeRepositoryImpl : FakeStringsRepo {
-  override fun getStrings(): Either<Array<String>, Throwable> = AsyncEither { resolve, _ ->
+  override fun getStrings(): AsyncEither<Array<String>> = AsyncEither { resolve, _ ->
+    Thread.sleep(5000)
+    resolve(arrayOf("somekey", "somekey1",
+        "somekey2", "somekey3",
+        "somekey4", "somekey5"))
+    Thread.sleep(5000)
+    resolve(arrayOf("somekey", "somekey1",
+        "somekey2", "somekey3",
+        "somekey4", "somekey5"))
     Thread.sleep(5000)
     resolve(arrayOf("somekey", "somekey1",
         "somekey2", "somekey3",
@@ -57,7 +65,7 @@ class MainActivity : AppCompatActivity() {
            * @return the result of the task
            */
           // assuming this is some very heavy operation that is synchronous
-          Thread.sleep(1000)
+
           when {
             args != null -> preferences.getString(args)
             else -> ""
@@ -94,8 +102,6 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-    LogUtil.addLogAdapter(CommonLogAdapter())
-
     preferences.save(ArrayMap<String, Any>().apply {
       put("somekey", "key0")
       put("somekey1", "key1")
@@ -109,14 +115,16 @@ class MainActivity : AppCompatActivity() {
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     val fakeStringsRepo: FakeStringsRepo = FakeRepositoryImpl()
-
-    AndroidPromise.instance().execute {
-      val strings = fakeStringsRepo.getStrings().foldSync()
+    fakeStringsRepo.getStrings().yieldOnUi({ strings ->
+      title_textview.text = "Started reading"
+      LogUtil.e(TAG, strings.toString())
       TransactionManager.instance().execute(transaction.complete {
         preferences_textview.text = it.reverse().toString()
-      }, Pair(strings, 1000))
-    }
-
+        title_textview.text = "Completed reading"
+      }, Pair(strings, 100))
+    }, {
+      LogUtil.e(TAG, "execution error ", it)
+    })
     /*fakeStringsRepo.getStrings().fold()
 
         .then { strings ->
@@ -125,7 +133,7 @@ class MainActivity : AppCompatActivity() {
           }, Pair(strings, 1000))
           strings
         }.execute()*/
-    title_textview.text = "Started reading"
+
     /* PromiseCallback<Array<String>> { resolve, _ ->
              resolve(arrayOf("somekey", "somekey1",
                  "somekey2", "somekey3",
@@ -147,7 +155,10 @@ class MainActivity : AppCompatActivity() {
   }
 
   companion object {
-    val TAG = LogUtil.makeTag(MainActivity::class.java)
+    val TAG: String = LogUtil.makeTag(MainActivity::class.java)
+    init {
+      LogUtil.addLogAdapter(CommonLogAdapter())
+    }
     const val PREFERENCE_NAME = "pref_name"
   }
 }

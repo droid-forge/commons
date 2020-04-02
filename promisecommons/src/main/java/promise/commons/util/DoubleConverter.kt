@@ -10,28 +10,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package promise.commons.util;
+package promise.commons.util
 
 /**
  * The double converter converts a class instance to and from another form
  *
  * @param <T> the type instance to be converted
- * @param <E> type to get the instance from during de-serializing
- * @param <X> type returned after serializing the instance
- */
-public interface DoubleConverter<T, E, X> {
+ * @param <DESERIALIZABLE> type to get the instance from during de-serializing
+ * @param <SERIALIZABLE> type returned after serializing the instance
+</SERIALIZABLE></DESERIALIZABLE></T> */
+interface DoubleConverter<T, in DESERIALIZABLE, out SERIALIZABLE> {
   /*
    * deserialize back the instance from the serializes form
    * @param e serialized form
    * @return back the instance
    */
-  T deserialize(E e);
+  fun deserialize(e: DESERIALIZABLE): T
 
   /*
    *  serializes the instance to another form
    * @param t the instance to be serialized
    * @return the serialized form of t
    */
-  X serialize(T t);
+  fun serialize(t: T): SERIALIZABLE
 }

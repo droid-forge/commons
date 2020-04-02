@@ -21,8 +21,7 @@ class AndroidPromiseInstanceProvider implements InstanceProvider<AndroidPromise>
 
   private int numOfThreads = 1;
 
-  private boolean enableDebug = false;
-
+  private boolean enableDebug;
 
   private AndroidPromiseInstanceProvider(ApplicationInstanceProvider applicationInstanceProvider, boolean enableDebug) {
     this.applicationInstanceProvider = applicationInstanceProvider;
@@ -57,6 +56,7 @@ class AndroidPromiseInstanceProvider implements InstanceProvider<AndroidPromise>
     AndroidPromise instance = new AndroidPromise(applicationInstanceProvider.get());
     instance.enableDebug = enableDebug;
     if (numOfThreads > 1) return instance.threads(numOfThreads);
+
     return instance;
   }
 }

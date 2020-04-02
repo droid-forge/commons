@@ -42,9 +42,6 @@ import promise.commons.model.function.MapIndexFunction;
 import promise.commons.model.function.ReduceFunction;
 import promise.commons.util.Conditions;
 
-/**
- * Created on 5/13/18 by yoctopus.
- */
 public class List<T> extends ArrayList<T> {
   /**
    * Constructs an empty list with the specified initial capacity.

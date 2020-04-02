@@ -13,9 +13,6 @@
 
 package promise.commons.model;
 
-/**
- * Created on 7/17/18 by yoctopus.
- */
 public class Arrangeable<Value, Key> {
   private Value value;
   private Key key;

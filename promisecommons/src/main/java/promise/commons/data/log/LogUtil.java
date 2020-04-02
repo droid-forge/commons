@@ -23,13 +23,12 @@ import promise.commons.AndroidPromise;
 import static promise.commons.util.Conditions.checkNotNull;
 
 public class LogUtil {
-
-  public static final int VERBOSE = 2;
-  public static final int DEBUG = 3;
-  public static final int INFO = 4;
-  public static final int WARN = 5;
-  public static final int ERROR = 6;
-  public static final int ASSERT = 7;
+  static final int VERBOSE = 2;
+  static final int DEBUG = 3;
+  static final int INFO = 4;
+  static final int WARN = 5;
+  static final int ERROR = 6;
+  static final int ASSERT = 7;
   protected static final AndroidPromise promise = AndroidPromise.instance();
   private static final String LOG_PREFIX = "_";
   private static final int LOG_PREFIX_LENGTH = LOG_PREFIX.length();
@@ -83,23 +82,23 @@ public class LogUtil {
     log(tag, Log.ERROR, t, messages);
   }
 
-  private static void log(String tag,
-                          int level,
-                          Throwable t,
-                          Object... messages) {
-    if (promise.enableDebug && Log.isLoggable(tag, level)) {
-      String message;
-      if (t == null && messages != null && messages.length == 1)
-        message = messages[0].toString();
-      else {
-        StringBuilder sb = new StringBuilder();
-        if (messages != null) for (Object m : messages) sb.append(m);
-        if (t != null) sb.append("\n").append(Log.getStackTraceString(t));
-        message = sb.toString();
-      }
-      android.util.Log.println(level, tag, message);
+    private static void log(String tag,
+                            int level,
+                            Throwable t,
+                            Object... messages) {
+        if (Log.isLoggable(tag, level)) {
+            String message;
+            if (t == null && messages != null && messages.length == 1)
+                message = messages[0].toString();
+            else {
+                StringBuilder sb = new StringBuilder();
+                if (messages != null) for (Object m : messages) sb.append(m);
+                if (t != null) sb.append("\n").append(Log.getStackTraceString(t));
+                message = sb.toString();
+            }
+            android.util.Log.println(level, tag, message);
+        }
     }
-  }
 
   static String logLevel(int value) {
     switch (value) {
@@ -120,9 +119,9 @@ public class LogUtil {
     }
   }
 
-  public static void printer(@NonNull Printer printer) {
-    printer = checkNotNull(printer);
-  }
+     public static void printer(@NonNull Printer printer) {
+        printer = checkNotNull(printer);
+    }
 
   public static void addLogAdapter(@NonNull LogAdapter adapter) {
     printer.addAdapter(checkNotNull(adapter));
@@ -141,60 +140,60 @@ public class LogUtil {
     return printer.t(tag);
   }
 
-  /**
-   * General log function that accepts all configurations as parameter
-   */
-  public static void log(int priority, @Nullable String tag, @Nullable String message, @Nullable Throwable throwable) {
-    printer.log(priority, tag, message, throwable);
-  }
+    /**
+     * General log function that accepts all configurations as parameter
+     */
+    public static void log(int priority, @Nullable String tag, @Nullable String message, @Nullable Throwable throwable) {
+        printer.log(priority, tag, message, throwable);
+    }
 
-  public static void printDebug(@NonNull String message, @Nullable Object... args) {
-    printer.d(message, args);
-  }
+    public static void printDebug(@NonNull String message, @Nullable Object... args) {
+        printer.d(message, args);
+    }
 
-  public static void printDebugd(@Nullable Object object) {
-    printer.d(object);
-  }
+    public static void printDebugd(@Nullable Object object) {
+        printer.d(object);
+    }
 
-  public static void printError(@NonNull String message, @Nullable Object... args) {
-    printer.e(null, message, args);
-  }
+    public static void printError(@NonNull String message, @Nullable Object... args) {
+        printer.e(null, message, args);
+    }
 
-  public static void printError(@Nullable Throwable throwable, @NonNull String message, @Nullable Object... args) {
-    printer.e(throwable, message, args);
-  }
+    public static void printError(@Nullable Throwable throwable, @NonNull String message, @Nullable Object... args) {
+        printer.e(throwable, message, args);
+    }
 
-  public static void printInfo(@NonNull String message, @Nullable Object... args) {
-    printer.i(message, args);
-  }
+    public static void printInfo(@NonNull String message, @Nullable Object... args) {
+        printer.i(message, args);
+    }
 
-  public static void printVerbose(@NonNull String message, @Nullable Object... args) {
-    printer.v(message, args);
-  }
+    public static void printVerbose(@NonNull String message, @Nullable Object... args) {
+        printer.v(message, args);
+    }
 
-  public static void printWarning(@NonNull String message, @Nullable Object... args) {
-    printer.w(message, args);
-  }
+    public static void printWarning(@NonNull String message, @Nullable Object... args) {
+        printer.w(message, args);
+    }
 
-  /**
-   * Tip: Use this for exceptional situations to log
-   * ie: Unexpected errors etc
-   */
-  public static void printWTF(@NonNull String message, @Nullable Object... args) {
-    printer.wtf(message, args);
-  }
+    /**
+     * Tip: Use this for exceptional situations to log
+     * ie: Unexpected errors etc
+     */
+    public static void printWTF(@NonNull String message, @Nullable Object... args) {
+        printer.wtf(message, args);
+    }
 
-  /**
-   * Formats the given json content and print it
-   */
-  public static void printJson(@Nullable String json) {
-    printer.json(json);
-  }
+    /**
+     * Formats the given json content and print it
+     */
+    public static void printJson(@Nullable String json) {
+        printer.json(json);
+    }
 
-  /**
-   * Formats the given xml content and print it
-   */
-  public static void printXml(@Nullable String xml) {
-    printer.xml(xml);
-  }
+    /**
+     * Formats the given xml content and print it
+     */
+    public static void printXml(@Nullable String xml) {
+        printer.xml(xml);
+    }
 }

@@ -26,13 +26,13 @@ import java.io.OutputStream;
 import promise.commons.AndroidPromise;
 import promise.commons.data.log.LogUtil;
 
-public class Dir {
+public class Directory {
 
-  private static String TAG = LogUtil.makeTag(Dir.class);
+  private static String TAG = LogUtil.makeTag(Directory.class);
 
   private String name;
 
-  public Dir(String name) {
+  public Directory(String name) {
     map(name);
   }
 
@@ -45,8 +45,11 @@ public class Dir {
   }
 
   public static boolean make(String path) {
-    File file = new File(path);
-    if (!file.exists()) return file.mkdirs();
+    return make(new File(path));
+  }
+
+  public static boolean make(File path) {
+    if (!path.exists()) return path.mkdirs();
     return true;
   }
 
@@ -84,7 +87,7 @@ public class Dir {
     try {
       LogUtil.e(TAG, "origin", inputPath + File.separator + inputFile);
       in = new FileInputStream(inputPath + File.separator + inputFile);
-      out = new FileOutputStream(new Dir(outputPath).getName() + File.separator + inputFile);
+      out = new FileOutputStream(new Directory(outputPath).getName() + File.separator + inputFile);
       byte[] buffer = new byte[1024];
       int read;
       while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);

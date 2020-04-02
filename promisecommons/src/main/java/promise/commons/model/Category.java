@@ -13,9 +13,6 @@
 
 package promise.commons.model;
 
-/**
- * Created on 6/8/18 by yoctopus.
- */
 
 public class Category<K, T> {
   private List<? extends T> list;

@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import promise.commons.file.Dir;
+import promise.commons.file.Directory;
 
 import static promise.commons.util.Conditions.checkNotNull;
 
@@ -99,7 +99,7 @@ public class DiskLogStrategy implements LogStrategy {
     private File getLogFile(@NonNull String folderName, @NonNull String fileName) {
       checkNotNull(folderName);
       checkNotNull(fileName);
-      Dir.make(folderName);
+      Directory.make(folderName);
       File folder = new File(folderName);
       int newFileCount = 0;
       File newFile;

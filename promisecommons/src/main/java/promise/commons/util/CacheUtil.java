@@ -25,26 +25,24 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.Date;
 
+import promise.commons.AndroidPromise;
 import promise.commons.data.log.LogUtil;
-import promise.commons.file.Dir;
+import promise.commons.file.Directory;
 
 public class CacheUtil {
   private String TAG = LogUtil.makeTag(CacheUtil.class);
-  private Context context;
   // The cache directory should look something like this
   private File cacheDirectory;
 
   private CacheUtil(Context context) {
-    this.context = context;
-
-    if (Dir.isWritable()) {
+    if (Directory.isWritable()) {
       cacheDirectory = context.getCacheDir();
-      cacheDirectory.mkdirs();
+      Directory.make(cacheDirectory);
     }
   }
 
-  public static CacheUtil of(Context context) {
-    return new CacheUtil(context);
+  public static CacheUtil getInstance() {
+    return new CacheUtil(AndroidPromise.instance().getApplication());
   }
 
   private static boolean tooOld(long time) {

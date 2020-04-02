@@ -28,13 +28,19 @@ import io.reactivex.ObservableSource;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.UndeliverableException;
+import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import promise.commons.data.log.LogUtil;
 import promise.commons.model.List;
 import promise.commons.model.Message;
 import promise.commons.model.function.MapFunction;
+import promise.commons.tx.AsyncEither;
+import promise.commons.tx.Either;
 import promise.commons.tx.PromiseResult;
 import promise.commons.util.Conditions;
 
@@ -50,6 +56,10 @@ public class AndroidPromise {
    *
    */
   private static String TAG;
+
+  /**
+   *
+   */
   public boolean enableDebug;
   /**
    *
@@ -94,11 +104,11 @@ public class AndroidPromise {
       AndroidPromiseInstanceProvider.instance();
       throw new IllegalStateException("Promise can only be instantiated once");
     } catch (IllegalAccessException ignored) {
+      TAG = LogUtil.makeTag(AndroidPromise.class);
       initializeRxUndeliverableError();
       SingletonInstanceProvider.provider(
           AndroidPromiseInstanceProvider.create(
-              ApplicationInstanceProvider.create(context), enableDebug)).get();
-      TAG = LogUtil.makeTag(AndroidPromise.class);
+              ApplicationInstanceProvider.create(context), enableDebug));
     }
   }
 
@@ -113,12 +123,12 @@ public class AndroidPromise {
       AndroidPromiseInstanceProvider.instance();
       throw new IllegalStateException("Promise can only be instantiated once");
     } catch (IllegalAccessException ignored) {
+      TAG = LogUtil.makeTag(AndroidPromise.class);
       initializeRxUndeliverableError();
       SingletonInstanceProvider.provider(
           AndroidPromiseInstanceProvider.create(
               ApplicationInstanceProvider.create(context),
-              numOfThreads, enableDebug)).get();
-      TAG = LogUtil.makeTag(AndroidPromise.class);
+              numOfThreads, enableDebug));
     }
   }
 
@@ -263,7 +273,7 @@ public class AndroidPromise {
    * @param <T>
    */
   public <T> void execute(
-      final Callable<T> action, final PromiseResult<T, Throwable> promiseResult) {
+      final Callable<? extends T> action, final PromiseResult<T, Throwable> promiseResult) {
     if (disposables == null) disposables = new List<>();
     disposables.add(
         Observable.fromCallable(
@@ -274,6 +284,22 @@ public class AndroidPromise {
                 promiseResult::response,
                 promiseResult::error));
     disposable.add(Conditions.checkNotNull(disposables.last()));
+  }
+
+  public <T> Either<T> execute(
+      final Callable<? extends T> action) {
+    return new AsyncEither<>((unitFunction1, unitFunction12) -> {
+      if (disposables == null) disposables = new List<>();
+      disposables.add(
+          Observable.fromCallable(
+              action)
+              .observeOn(Schedulers.from(executor()))
+              .subscribeOn(Schedulers.from(executor()))
+              .subscribe((Consumer<T>) unitFunction1::invoke,
+                  unitFunction12::invoke));
+      disposable.add(Conditions.checkNotNull(disposables.last()));
+      return null;
+    });
   }
 
  /* public <T> void executeAsync(
@@ -310,7 +336,7 @@ public class AndroidPromise {
    * @param promiseResult
    */
   public void execute(
-      final List<Callable<?>> actions, final PromiseResult<List<?>, Throwable> promiseResult) {
+      final List<? extends Callable<?>> actions, final PromiseResult<List<?>, Throwable> promiseResult) {
     if (disposables == null) disposables = new List<>();
     disposables.add(
         Observable.zip(

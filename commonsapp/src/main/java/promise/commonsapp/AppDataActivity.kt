@@ -15,7 +15,7 @@ package promise.commonsapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import promise.commons.file.Dir
+import promise.commons.file.Directory
 
 class AppDataActivity : AppCompatActivity() {
 
@@ -25,7 +25,7 @@ class AppDataActivity : AppCompatActivity() {
   }
 
   override fun finish() {
-    Dir.clearAppData()
+    Directory.clearAppData()
     super.finish()
   }
 }
