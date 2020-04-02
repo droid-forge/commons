@@ -25,28 +25,32 @@ import promise.commons.makeInstance
 import promise.commons.pref.Preferences
 import promise.commons.tx.AsyncEither
 import promise.commons.tx.Either
+import promise.commons.tx.Left
 import promise.commons.tx.Transaction
 import promise.commons.tx.Transaction.CallBackExecutor
 import promise.commons.tx.TransactionManager
 
 interface FakeStringsRepo {
-  fun getStrings(): AsyncEither<Array<String>>
+  fun getStrings(throwexception: Boolean): Either<Array<String>>
 }
 
 class FakeRepositoryImpl : FakeStringsRepo {
-  override fun getStrings(): AsyncEither<Array<String>> = AsyncEither { resolve, _ ->
-    Thread.sleep(5000)
-    resolve(arrayOf("somekey", "somekey1",
-        "somekey2", "somekey3",
-        "somekey4", "somekey5"))
-    Thread.sleep(5000)
-    resolve(arrayOf("somekey", "somekey1",
-        "somekey2", "somekey3",
-        "somekey4", "somekey5"))
-    Thread.sleep(5000)
-    resolve(arrayOf("somekey", "somekey1",
-        "somekey2", "somekey3",
-        "somekey4", "somekey5"))
+  override fun getStrings(throwexception: Boolean): Either<Array<String>> {
+    if (throwexception) return Left(Exception("should throw exception"))
+    return AsyncEither { resolve, _ ->
+      Thread.sleep(5000)
+      resolve(arrayOf("somekey", "somekey1",
+          "somekey2", "somekey3",
+          "somekey4", "somekey5"))
+      Thread.sleep(5000)
+      resolve(arrayOf("somekey", "somekey1",
+          "somekey2", "somekey3",
+          "somekey4", "somekey5"))
+      Thread.sleep(5000)
+      resolve(arrayOf("somekey", "somekey1",
+          "somekey2", "somekey3",
+          "somekey4", "somekey5"))
+    }
   }
 }
 
@@ -115,7 +119,8 @@ class MainActivity : AppCompatActivity() {
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     val fakeStringsRepo: FakeStringsRepo = FakeRepositoryImpl()
-    fakeStringsRepo.getStrings().yieldOnUi({ strings ->
+    val either = fakeStringsRepo.getStrings(true)
+    if (either is AsyncEither) either.yieldOnUi({ strings ->
       title_textview.text = "Started reading"
       LogUtil.e(TAG, strings.toString())
       TransactionManager.instance().execute(transaction.complete {
@@ -125,6 +130,19 @@ class MainActivity : AppCompatActivity() {
     }, {
       LogUtil.e(TAG, "execution error ", it)
     })
+    else AndroidPromise.instance().execute {
+      try {
+        val data = either.foldSync()
+        TransactionManager.instance().execute(transaction.complete {
+          preferences_textview.text = it.reverse().toString()
+          title_textview.text = "Completed reading"
+        }, Pair(data, 100))
+      } catch (e: java.lang.Exception) {
+        LogUtil.e(TAG, e)
+      }
+
+    }
+
     /*fakeStringsRepo.getStrings().fold()
 
         .then { strings ->

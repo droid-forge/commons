@@ -104,11 +104,11 @@ public class AndroidPromise {
       AndroidPromiseInstanceProvider.instance();
       throw new IllegalStateException("Promise can only be instantiated once");
     } catch (IllegalAccessException ignored) {
-      TAG = LogUtil.makeTag(AndroidPromise.class);
       initializeRxUndeliverableError();
       SingletonInstanceProvider.provider(
           AndroidPromiseInstanceProvider.create(
               ApplicationInstanceProvider.create(context), enableDebug));
+      TAG = LogUtil.makeTag(AndroidPromise.class);
     }
   }
 
@@ -123,12 +123,12 @@ public class AndroidPromise {
       AndroidPromiseInstanceProvider.instance();
       throw new IllegalStateException("Promise can only be instantiated once");
     } catch (IllegalAccessException ignored) {
-      TAG = LogUtil.makeTag(AndroidPromise.class);
       initializeRxUndeliverableError();
       SingletonInstanceProvider.provider(
           AndroidPromiseInstanceProvider.create(
               ApplicationInstanceProvider.create(context),
               numOfThreads, enableDebug));
+      TAG = LogUtil.makeTag(AndroidPromise.class);
     }
   }
 

@@ -300,11 +300,11 @@ class Right<T : Any>(
 /**
  *
  */
-class Left<E : Throwable>(
+class Left<T: Any>(
     /**
      *
      */
-    e: E) : SyncEither<Any>(
+    e: Throwable) : SyncEither<T>(
     /**
      *
      */
