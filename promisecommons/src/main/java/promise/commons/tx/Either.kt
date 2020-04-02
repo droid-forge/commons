@@ -22,7 +22,7 @@ import promise.commons.data.log.LogUtil
 /**
  *
  */
-interface Either<T> {
+interface Either<T: Any> {
   /**
    *
    */
