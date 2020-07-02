@@ -13,14 +13,12 @@
 
 package promise.commons.data.log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Determines destination target for the logs such as Disk, Logcat etc.
  *
- * @see LogcatLogStrategy
- * @see DiskLogStrategy
  */
 public interface LogStrategy {
 
@@ -32,5 +30,5 @@ public interface LogStrategy {
    * @param tag      is the given tag for the log message.
    * @param message  is the given message for the log message.
    */
-  void log(int priority, @Nullable String tag, @NonNull String message);
+  void log(int priority, @Nullable String tag, String message);
 }

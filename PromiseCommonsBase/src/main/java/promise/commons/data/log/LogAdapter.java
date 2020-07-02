@@ -13,16 +13,22 @@
 
 package promise.commons.data.log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Provides a common interface to emits logs through. This is a required contract for Logger.
  *
- * @see CommonLogAdapter
- * @see DiskLogAdapter
+ *
  */
 public interface LogAdapter {
+
+  int VERBOSE = 2;
+  int DEBUG = 3;
+  int INFO = 4;
+  int WARN = 5;
+  int ERROR = 6;
+  int ASSERT = 7;
 
   /**
    * Used to determine whether log should be printed out or not.
@@ -41,5 +47,5 @@ public interface LogAdapter {
    * @param tag      is the given tag for the log message.
    * @param message  is the given message for the log message.
    */
-  void log(int priority, @Nullable String tag, @NonNull String message);
+  void log(int priority, @Nullable String tag, String message);
 }

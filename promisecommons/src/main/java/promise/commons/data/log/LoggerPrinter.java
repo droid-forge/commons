@@ -36,12 +36,12 @@ import javax.xml.transform.stream.StreamSource;
 
 import promise.commons.Utils;
 
-import static promise.commons.data.log.LogUtil.ASSERT;
-import static promise.commons.data.log.LogUtil.DEBUG;
-import static promise.commons.data.log.LogUtil.ERROR;
-import static promise.commons.data.log.LogUtil.INFO;
-import static promise.commons.data.log.LogUtil.VERBOSE;
-import static promise.commons.data.log.LogUtil.WARN;
+import static promise.commons.data.log.LogAdapter.ASSERT;
+import static promise.commons.data.log.LogAdapter.DEBUG;
+import static promise.commons.data.log.LogAdapter.ERROR;
+import static promise.commons.data.log.LogAdapter.INFO;
+import static promise.commons.data.log.LogAdapter.VERBOSE;
+import static promise.commons.data.log.LogAdapter.WARN;
 import static promise.commons.util.Conditions.checkNotNull;
 
 class LoggerPrinter implements Printer {

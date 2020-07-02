@@ -20,15 +20,16 @@ import androidx.annotation.Nullable;
 
 import promise.commons.AndroidPromise;
 
+import static promise.commons.data.log.LogAdapter.ASSERT;
+import static promise.commons.data.log.LogAdapter.DEBUG;
+import static promise.commons.data.log.LogAdapter.ERROR;
+import static promise.commons.data.log.LogAdapter.INFO;
+import static promise.commons.data.log.LogAdapter.VERBOSE;
+import static promise.commons.data.log.LogAdapter.WARN;
 import static promise.commons.util.Conditions.checkNotNull;
 
 public class LogUtil {
-  static final int VERBOSE = 2;
-  static final int DEBUG = 3;
-  static final int INFO = 4;
-  static final int WARN = 5;
-  static final int ERROR = 6;
-  static final int ASSERT = 7;
+
   protected static final AndroidPromise promise = AndroidPromise.instance();
   private static final String LOG_PREFIX = "_";
   private static final int LOG_PREFIX_LENGTH = LOG_PREFIX.length();

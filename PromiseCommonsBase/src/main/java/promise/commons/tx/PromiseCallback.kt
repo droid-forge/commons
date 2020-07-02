@@ -12,8 +12,7 @@
  */
 
 package promise.commons.tx
-
-import promise.commons.data.log.LogUtil
+import promise.commons.data.log.LogAdapter
 import promise.commons.model.List
 
 /**
@@ -23,6 +22,9 @@ import promise.commons.model.List
  */
 
 class PromiseCallback<RESULT>(private val resultConsumer: (resolve: (RESULT) -> Unit, reject: (Throwable) -> Unit) -> Unit) {
+
+  var logAdapter: LogAdapter? = null
+
   /**
    * holds the result of then execution
    */
@@ -100,7 +102,7 @@ class PromiseCallback<RESULT>(private val resultConsumer: (resolve: (RESULT) -> 
 
   private fun cycleErrorAccepting() {
     if (errorAcceptors.isEmpty()) {
-      LogUtil.e(TAG, "No error acceptors found ")
+      logAdapter?.log(LogAdapter.WARN, TAG, "No error acceptors found ")
       return
     }
     for (acceptor in errorAcceptors) {
@@ -117,7 +119,7 @@ class PromiseCallback<RESULT>(private val resultConsumer: (resolve: (RESULT) -> 
   }
 
   companion object {
-    val TAG: String = LogUtil.makeTag(PromiseCallback::class.java)
+    const val TAG: String = "PromiseCallback"
   }
 
 }

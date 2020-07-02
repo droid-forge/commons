@@ -14,7 +14,6 @@
 package promise.commons.tx
 
 import android.os.Looper
-import org.reactivestreams.Subscriber
 import promise.commons.AndroidPromise
 import promise.commons.data.log.CommonLogAdapter
 import promise.commons.data.log.LogUtil

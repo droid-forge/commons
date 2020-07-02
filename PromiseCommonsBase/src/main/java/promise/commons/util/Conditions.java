@@ -13,7 +13,7 @@
 
 package promise.commons.util;
 
-import androidx.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public final class Conditions {
 
@@ -47,7 +47,7 @@ public final class Conditions {
    * @throws IllegalArgumentException if {@code expression} is false
    */
   public static void checkArgument(boolean expression,
-                                   @Nullable Object errorMessage) {
+                                   Object errorMessage) {
     if (!expression) {
       throw new IllegalArgumentException(
           String.valueOf(errorMessage));
@@ -88,8 +88,8 @@ public final class Conditions {
    *                                  is null (don't let this happen)
    */
   public static void checkArgument(boolean expression,
-                                   @Nullable String errorMessageTemplate,
-                                   @Nullable Object... errorMessageArgs) {
+                                    String errorMessageTemplate,
+                                   Object... errorMessageArgs) {
     if (!expression) {
       throw new IllegalArgumentException(
           format(errorMessageTemplate,

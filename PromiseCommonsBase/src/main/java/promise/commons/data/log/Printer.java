@@ -13,8 +13,8 @@
 
 package promise.commons.data.log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A proxy interface to enable additional operations.
@@ -22,25 +22,25 @@ import androidx.annotation.Nullable;
  */
 public interface Printer {
 
-  void addAdapter(@NonNull LogAdapter adapter);
+  void addAdapter(LogAdapter adapter);
 
   Printer t(@Nullable String tag);
 
-  void d(@NonNull String message, @Nullable Object... args);
+  void d(String message, @Nullable Object... args);
 
   void d(@Nullable Object object);
 
-  void e(@NonNull String message, @Nullable Object... args);
+  void e(String message, @Nullable Object... args);
 
-  void e(@Nullable Throwable throwable, @NonNull String message, @Nullable Object... args);
+  void e(@Nullable Throwable throwable, String message, @Nullable Object... args);
 
-  void w(@NonNull String message, @Nullable Object... args);
+  void w(String message, @Nullable Object... args);
 
-  void i(@NonNull String message, @Nullable Object... args);
+  void i(String message, @Nullable Object... args);
 
-  void v(@NonNull String message, @Nullable Object... args);
+  void v(String message, @Nullable Object... args);
 
-  void wtf(@NonNull String message, @Nullable Object... args);
+  void wtf(String message, @Nullable Object... args);
 
   /**
    * Formats the given json content and print it

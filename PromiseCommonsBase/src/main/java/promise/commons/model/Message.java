@@ -11,18 +11,31 @@
  * limitations under the License.
  */
 
-package promise.commons.data.log;
+package promise.commons.model;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import java.io.Serializable;
 
-/**
- * Used to determine how messages should be printed or saved.
- *
- * @see PromiseFormatStrategy
- * @see CsvFormatStrategy
- */
-public interface FormatStrategy {
+public class Message implements Serializable {
+  private String sender;
+  private Object message;
 
-  void log(int priority, @Nullable String tag, @NonNull String message);
+  public Message(String sender, Object message) {
+    this.sender = sender;
+    this.message = message;
+  }
+  @Override
+  public String toString() {
+    return "Message{" +
+        "sender='" + sender + '\'' +
+        ", message=" + message +
+        '}';
+  }
+
+  public String sender() {
+    return sender;
+  }
+
+  public Object message() {
+    return message;
+  }
 }

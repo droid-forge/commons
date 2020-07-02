@@ -13,11 +13,7 @@
 
 package promise.commons.model;
 
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.collection.ArrayMap;
-import androidx.core.util.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,9 +22,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import kotlin.Pair;
 import promise.commons.model.function.BIConsumer;
 import promise.commons.model.function.Combiner;
 import promise.commons.model.function.FilterFunction;
@@ -66,7 +64,7 @@ public class List<T> extends ArrayList<T> {
    * @param c the collection whose elements are to be placed into this list
    * @throws NullPointerException if the specified collection is null
    */
-  public List(@NonNull Collection<? extends T> c) {
+  public List(Collection<? extends T> c) {
     super(c);
   }
 
@@ -241,7 +239,7 @@ public class List<T> extends ArrayList<T> {
    */
   public <K, E> List<E> group(GroupFunction2<K, E, T> function) {
     List<E> es = new List<>();
-    Map<K, List<T>> map = new ArrayMap<>();
+    Map<K, List<T>> map = new LinkedHashMap<>();
     for (int i = 0, size = this.size(); i < size; i++) {
       T t = this.get(i);
       K key = function.getKey(t);
