@@ -11,5 +11,6 @@
  * limitations under the License.
  */
 
-include ':promisecommons', ':commonsapp'
+//include ':promisecommons'
+include ':commonsapp'
 include ':PromiseCommonsBase'
