@@ -11,8 +11,15 @@
  * limitations under the License.
  */
 
-//include ':promisecommons'
-include ':app'
-include ':promise'
-include ':commons'
-include ':plugin'
+package promise.plugin
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
+class AndroidPromisePlugin : Plugin<Project> {
+
+  override fun apply(project: Project) {
+   project.dependencies.add("com.github.android-promise:commons", "1.1-beta02")
+    project.dependencies.add("io.reactivex.rxjava2:rxjava", "2.2.17")
+  }
+}

@@ -195,12 +195,10 @@ public final class Conditions {
                                    @Nullable String errorMessageTemplate,
                                    char p1,
                                    int p2) {
-    if (!b) {
-      throw new IllegalArgumentException(
-          format(errorMessageTemplate,
-              p1,
-              p2));
-    }
+    if (!b) throw new IllegalArgumentException(
+        format(errorMessageTemplate,
+            p1,
+            p2));
   }
 
   /**

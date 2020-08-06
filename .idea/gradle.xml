@@ -10,9 +10,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/PromiseCommonsBase" />
-            <option value="$PROJECT_DIR$/commonsapp" />
-            <option value="$PROJECT_DIR$/promisecommons" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/commons" />
+            <option value="$PROJECT_DIR$/plugin" />
+            <option value="$PROJECT_DIR$/promise" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

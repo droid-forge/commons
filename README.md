@@ -40,7 +40,7 @@ dependencies {
 }
 
 ```
-# Initialization
+## Initialization
 Initialize Promise in your main application file, entry point
 
 #### App.java

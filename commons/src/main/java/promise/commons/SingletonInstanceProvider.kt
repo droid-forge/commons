@@ -24,23 +24,13 @@ package promise.commons
  * @param provider
  */
 class SingletonInstanceProvider<out T> private constructor(provider: InstanceProvider<T>) : InstanceProvider<T> {
-  /**
-   *
-   */
+
   @Volatile
   private var provider: InstanceProvider<T>? = null
 
-  /**
-   *
-   */
   @Volatile
   private var instance = NAKED
 
-  /**
-   *
-   *
-   * @return
-   */
   override
   fun get(): T {
     var result = instance
@@ -59,28 +49,15 @@ class SingletonInstanceProvider<out T> private constructor(provider: InstancePro
   }
 
   companion object {
-    /**
-     *
-     */
+
     private val NAKED = Any()
 
-    /**
-     *
-     *
-     * @param P
-     * @param T
-     * @param provider
-     * @return
-     */
     @JvmStatic
     fun <T, P : InstanceProvider<T>> provider(provider: P): InstanceProvider<T> =
         provider as? SingletonInstanceProvider<T>
             ?: SingletonInstanceProvider(provider)
   }
 
-  /**
-   * initialize the provider
-   */
   init {
     this.provider = provider
   }
