@@ -15,11 +15,21 @@ package promise.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.DependencyResolutionListener
+import org.gradle.api.artifacts.ResolvableDependencies
 
 class AndroidPromisePlugin : Plugin<Project> {
-
   override fun apply(project: Project) {
-   project.dependencies.add("com.github.android-promise:commons", "1.1-beta02")
-    project.dependencies.add("io.reactivex.rxjava2:rxjava", "2.2.17")
+    val implementationDeps = project.configurations.getByName("implementation").dependencies
+    val mainDepedency = project.dependencies.create("com.github.android-promise:commons:1.1-beta02")
+    val rxJavaDep = project.dependencies.create("io.reactivex.rxjava2:rxjava:2.2.17")
+    if (!implementationDeps.contains(mainDepedency) || !implementationDeps.contains(rxJavaDep)) project.gradle.addListener( object :DependencyResolutionListener {
+      override fun beforeResolve(p0: ResolvableDependencies) {
+        if (!implementationDeps.contains(mainDepedency)) implementationDeps.add(mainDepedency)
+        if (!implementationDeps.contains(rxJavaDep)) implementationDeps.add(rxJavaDep)
+        project.gradle.removeListener(this)
+      }
+      override fun afterResolve(p0: ResolvableDependencies) { }
+    })
   }
 }

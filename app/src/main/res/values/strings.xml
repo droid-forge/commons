@@ -13,4 +13,6 @@
 
 <resources>
     <string name="app_name">CommonsApp</string>
+    <string name="completed_reading">Completed reading</string>
+    <string name="started_reading">Started reading</string>
 </resources>

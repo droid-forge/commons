@@ -31,12 +31,12 @@ import promise.commons.tx.Transaction.CallBackExecutor
 import promise.commons.tx.TransactionManager
 
 interface FakeStringsRepo {
-  fun getStrings(throwexception: Boolean): Either<Array<String>>
+  fun getStrings(throwException: Boolean): Either<Array<String>>
 }
 
 class FakeRepositoryImpl : FakeStringsRepo {
-  override fun getStrings(throwexception: Boolean): Either<Array<String>> {
-    if (throwexception) return Left(Exception("should throw exception"))
+  override fun getStrings(throwException: Boolean): Either<Array<String>> {
+    if (throwException) return Left(Exception("should throw exception"))
     return AsyncEither { resolve, _ ->
       Thread.sleep(5000)
       resolve(arrayOf("somekey", "somekey1",
@@ -121,11 +121,11 @@ class MainActivity : AppCompatActivity() {
     val fakeStringsRepo: FakeStringsRepo = FakeRepositoryImpl()
     val either = fakeStringsRepo.getStrings(true)
     if (either is AsyncEither) either.yieldOnUi({ strings ->
-      title_textview.text = "Started reading"
+      title_textview.text = getString(R.string.started_reading)
       LogUtil.e(TAG, strings.toString())
       TransactionManager.instance().execute(transaction.complete {
         preferences_textview.text = it.reverse().toString()
-        title_textview.text = "Completed reading"
+        title_textview.text = getString(R.string.completed_reading)
       }, Pair(strings, 100))
     }, {
       LogUtil.e(TAG, "execution error ", it)
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         val data = either.foldSync()
         TransactionManager.instance().execute(transaction.complete {
           preferences_textview.text = it.reverse().toString()
-          title_textview.text = "Completed reading"
+          title_textview.text = getString(R.string.completed_reading)
         }, Pair(data, 100))
       } catch (e: java.lang.Exception) {
         LogUtil.e(TAG, e)
